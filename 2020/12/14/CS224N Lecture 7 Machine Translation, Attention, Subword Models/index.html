@@ -1,0 +1,616 @@
+<!DOCTYPE html><html class="hide-aside" lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CS224N Lecture 7 Machine Translation, Attention, Subword Models | AIgonna</title><meta name="keywords" content="CS224n,机翻,SMT,NMT,Beam search,Attention"><meta name="author" content="miller"><meta name="copyright" content="miller"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="Section 1: Machine Translation机翻是一个把句子x从一种语言(源语言)翻译到另一种语言(目标语言)的句子y的任务。  1990s-2010s: Statistical Machine Translation 核心思想：从数据中学习概率模型  假设我们在翻译法语→英语  我们希望给定法语句子x，找到最好的英语句子y  \text{argmax }_y P(y \vert">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS224N Lecture 7 Machine Translation, Attention, Subword Models">
+<meta property="og:url" content="http://example.com/2020/12/14/CS224N%20Lecture%207%20Machine%20Translation,%20Attention,%20Subword%20Models/index.html">
+<meta property="og:site_name" content="AIgonna">
+<meta property="og:description" content="Section 1: Machine Translation机翻是一个把句子x从一种语言(源语言)翻译到另一种语言(目标语言)的句子y的任务。  1990s-2010s: Statistical Machine Translation 核心思想：从数据中学习概率模型  假设我们在翻译法语→英语  我们希望给定法语句子x，找到最好的英语句子y  \text{argmax }_y P(y \vert">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/imgs/14.jpg">
+<meta property="article:published_time" content="2020-12-14T15:23:31.000Z">
+<meta property="article:modified_time" content="2021-02-25T09:08:16.452Z">
+<meta property="article:author" content="miller">
+<meta property="article:tag" content="CS224n">
+<meta property="article:tag" content="机翻">
+<meta property="article:tag" content="SMT">
+<meta property="article:tag" content="NMT">
+<meta property="article:tag" content="Beam search">
+<meta property="article:tag" content="Attention">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/imgs/14.jpg"><link rel="shortcut icon" href="/img/AI.png"><link rel="canonical" href="http://example.com/2020/12/14/CS224N%20Lecture%207%20Machine%20Translation,%20Attention,%20Subword%20Models/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-02-25 17:08:16'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 5.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/AI.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">34</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/imgs/14.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">AIgonna</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CS224N Lecture 7 Machine Translation, Attention, Subword Models</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2020-12-14T15:23:31.000Z" title="undefined 2020-12-14 23:23:31">2020-12-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NLP/">NLP</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">4.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h3 id="Section-1-Machine-Translation"><a href="#Section-1-Machine-Translation" class="headerlink" title="Section 1: Machine Translation"></a>Section 1: Machine Translation</h3><p>机翻是一个把句子x从一种语言(源语言)翻译到另一种语言(目标语言)的句子y的任务。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214095100.png" alt="image-20210214095051158" style="zoom:16%;" /></p>
+<h4 id="1990s-2010s-Statistical-Machine-Translation"><a href="#1990s-2010s-Statistical-Machine-Translation" class="headerlink" title="1990s-2010s: Statistical Machine Translation"></a>1990s-2010s: Statistical Machine Translation</h4><ul>
+<li><p>核心思想：从数据中学习概率模型</p>
+</li>
+<li><p>假设我们在翻译法语→英语</p>
+</li>
+<li><p>我们希望给定法语句子x，找到最好的英语句子y</p>
+<script type="math/tex; mode=display">
+\text{argmax }_y P(y \vert x) \tag{1}</script></li>
+<li><p>使用贝叶斯法则将其分解为两个部分分开学习：</p>
+<script type="math/tex; mode=display">
+= \text{argmax }_y P(x \vert y) P(y)\tag{2}</script></li>
+</ul>
+<p>上图中，x：法语， y：英语， 机器翻译的目标就是寻找y，使得$P(y \vert x)$最大，这就是式1. 接下来，我们利用贝叶斯分解为两个概率的乘积：其中$P(y )$用之前介绍过得语言模型，从英语单语的数据中学习怎么写的通顺。最简单的就用n-gram方法。$P(y \vert x)$，是指由目标语言到源语言的翻译模型，其专注于翻译模型，翻译好局部的单词和短语，这个模型学习来自于平行的数据语料。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214095426.png" alt="image-20210214095424905" style="zoom:18%;" /></p>
+<h4 id="Learning-alignment-for-SMT"><a href="#Learning-alignment-for-SMT" class="headerlink" title="Learning alignment for SMT"></a>Learning alignment for SMT</h4><ul>
+<li>Q: 怎么从平行语料中学习到翻译模型$P(x \vert y)$？</li>
+<li>进一步分解这个任务：引入一个模型的隐变量$a$：$P(x, a \vert y)$</li>
+<li>当a是对齐的，单词程度对应着源句子x到目标句子y。可以认为是两种语言之间单词和单词或短语和短语的一个对齐关系。</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214135931.png" alt="image-20210214135929263" style="zoom:18%;" /></p>
+<h4 id="What-is-alignment"><a href="#What-is-alignment" class="headerlink" title="What is alignment?"></a>What is alignment?</h4><p>对齐是在翻译句子对中指定单词的对应关系。如下图就是英语和法语的alignment。</p>
+<ul>
+<li>不同语言直接的类型差异导致了复杂的对齐关系</li>
+<li>注意：一些单词没有对应单词。</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214140544.png" alt="image-20210214140542816" style="zoom:16%;" /></p>
+<p><strong>对齐是复杂的</strong></p>
+<ul>
+<li>多对一， 一对多， 一对一， 多对多</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214141138.png" alt="image-20210214141137092" style="zoom:18%;" /></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214141302.png" alt="image-20210214141300684" style="zoom:18%;" /></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214141324.png" alt="image-20210214141323292" style="zoom:18%;" /></p>
+<h4 id="Learning-alignment-for-SMT-1"><a href="#Learning-alignment-for-SMT-1" class="headerlink" title="Learning alignment for SMT"></a>Learning alignment for SMT</h4><ul>
+<li>我们学习$P(x, a \vert y)$作为许多组合因素，包括：<ul>
+<li>指定单词对齐的概率(也取决于发送的位置)</li>
+<li>指定单词的概率有指定丰富关系(对应单词的数目)</li>
+<li>etc</li>
+</ul>
+</li>
+<li>对齐a是一个隐变量：它们在数据中不明确具体。<ul>
+<li>需要用特殊的算法(像最大期望算法) ，来学习有隐变量的参数分布。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214141501.png" alt="image-20210214141459130" style="zoom:20%;" /></p>
+<h4 id="Decoding-for-SMT"><a href="#Decoding-for-SMT" class="headerlink" title="Decoding for SMT"></a>Decoding for SMT</h4><p>如果计算argmax呢?</p>
+<ul>
+<li>穷举所有可能y然后计算这个概率? 代价太大！</li>
+<li>答案是： 采用模型是完全独立的假设，使用动态规划获得全局最优解(像<strong>维特比算法</strong>)，启发式搜索。</li>
+<li>这个过程称为解码</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214142538.png" alt="image-20210214142536962" style="zoom:20%;" /></p>
+<p>在搜索过程中，对概率较低的路径进行剪枝，只保留概率较大的翻译路径。如下图的搜索树，对于概率较低的路径就不往下搜索了。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214143503.png" alt="image-20210214143501378" style="zoom: 20%;" /></p>
+<p><strong>1990s-2010s： 统计机翻</strong></p>
+<ul>
+<li>SMT是一个非常大的研究领域</li>
+<li>最好的系统极其复杂<ul>
+<li>我们还有上百个关键细节没有提到</li>
+<li>系统有许多独立设计的子组件</li>
+<li>许多特征工程，需要设计特征来获取指定的语言现象</li>
+<li>需要编译和维护额为的资源，像相等的短语表</li>
+<li>维护需要大量人力，对每个语言对进行重复艰难的尝试！</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214144206.png" alt="image-20210214144203912" style="zoom:20%;" /></p>
+<h3 id="Section-2-Neural-Machine-Translation"><a href="#Section-2-Neural-Machine-Translation" class="headerlink" title="Section 2: Neural Machine Translation"></a>Section 2: Neural Machine Translation</h3><h4 id="What-is-Neural-Machine-Translation"><a href="#What-is-Neural-Machine-Translation" class="headerlink" title="What is Neural Machine Translation?"></a>What is Neural Machine Translation?</h4><ul>
+<li>神经网络机翻是是用单一端对端神经网络做机翻的方式</li>
+<li>神经网络架构被称为sequence-to-sequence 模型(简称seq2seq)，其包含两个RNNs。</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214145950.png" alt="image-20210214145948971" style="zoom:20%;" /></p>
+<h4 id="Neural-Machine-Translation-NMT"><a href="#Neural-Machine-Translation-NMT" class="headerlink" title="Neural Machine Translation (NMT)"></a>Neural Machine Translation (NMT)</h4><p>seq2seq模型如下图， 它由两个RNN构成。左边红色部分是Encoder RNN，它负责对源语言进行编码；右边的绿色部分称为Decoder RNN，它负责对目标语言进行解码（Decode）。首先，Encoder RNN可以是任意一个RNN，比如朴素RNN、LSTM或者GRU。Encoder RNN负责对源语言进行编码，学习源语言的隐含特征。Encoder RNN的最后一个神经元的隐状态作为Decoder RNN的初始隐状态。Decoder RNN是一个条件语言模型，一方面它是一个语言模型，即用来生成目标语言的；另一方面，它的初始隐状态是基于Encoder RNN的输出，所以称Decoder RNN是条件语言模型。Decoder RNN在预测的时候，需要把上一个神经元的输出作为下一个神经元的输入，不断的预测下一个词，直到预测输出了结束标志符<END>，预测结束。Encoder RNN的输入是源语言的word embeding，Decoder RNN的输入是目标语言的word embeding。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214150300.png" alt="image-20210214150257267" style="zoom: 20%;" /></p>
+<p>Seq2seq是很强大的模型不仅仅用于MT，还有许多NLP任务能变大为seq2seq：</p>
+<ul>
+<li>文本概括</li>
+<li>对话</li>
+<li>解析</li>
+<li><p>代码生成</p>
+</li>
+<li></li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214154407.png" alt="image-20210214154406061" style="zoom:20%;" /></p>
+<ul>
+<li>seq2seq是一个条件语言模型的例子<ul>
+<li>LM因为解码是预测目标句子y的下一个词</li>
+<li>条件是因为它预测也是建立在源句子x条件上</li>
+</ul>
+</li>
+<li>NMT直接计算$P(y \vert x)$，如下图中所示。</li>
+</ul>
+<p>那么问题来了，怎么训练NMT系统呢？</p>
+<ul>
+<li>找一个大的平行语料</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214163622.png" alt="image-20210214163621078" style="zoom:20%;" /></p>
+<h4 id="Training-a-Neural-Machine-Translation-system"><a href="#Training-a-Neural-Machine-Translation-system" class="headerlink" title="Training a Neural Machine Translation system"></a>Training a Neural Machine Translation system</h4><p>seq2seq被优化为一个单一系统。反向传播训练是“端对端”。如下图所示，将Encoder</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214154748.png" alt="image-20210214154746788" style="zoom:20%;" /></p>
+<h4 id="Multi-layer-RNNs"><a href="#Multi-layer-RNNs" class="headerlink" title="Multi-layer RNNs"></a>Multi-layer RNNs</h4><p>多层RNNs：</p>
+<ul>
+<li>RNNs已经是在一个维度上是“深”的(将其展开成许多时刻)</li>
+<li>我们也可以让其在另外的维度上变“深”，就通过应用多个RNNs——变成多层的RNN。</li>
+<li>允许网络计算更复杂的表示，低层的RNNs应该计算低层的特征高层RNNs应该计算高层的特征</li>
+<li>多层RNNs也叫堆叠RNNs</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214163427.png" alt="image-20210214163426512" style="zoom:20%;" /></p>
+<h4 id="Multi-layer-deep-encoder-decoder-machine-translation-net"><a href="#Multi-layer-deep-encoder-decoder-machine-translation-net" class="headerlink" title="Multi-layer deep encoder-decoder machine translation net"></a>Multi-layer deep encoder-decoder machine translation net</h4><p>多层深度编码-解码机翻网络</p>
+<p>来自RNN第i层的隐状态是RNN第i+1层的输入；左边红色部分多层RNN堆叠在一起作为编码器，来构建源句子的意思；右边绿色部分作为解码器来生成翻译。中间就像个瓶颈一样，叫做bottleneck。实际上多层RNNs应用技巧看上篇笔记。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214191855.png" alt="image-20210214191853097" style="zoom:20%;" /></p>
+<h4 id="Greedy-decoding"><a href="#Greedy-decoding" class="headerlink" title="Greedy decoding"></a>Greedy decoding</h4><ul>
+<li>我们看到怎样生成(或者说“解码”)目标句子，在解码的每个时间序列上采用argmax。</li>
+<li>这就是贪婪解码(的在每个step上取最可能的单词)</li>
+<li>这个方法的问题？</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214192823.png" alt="image-20210214192822013" style="zoom:20%;" /></p>
+<p><strong>Problems with greedy decoding</strong>  </p>
+<ul>
+<li>贪婪解码没有办法回溯，那怎么修复这个问题呢?</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214193345.png" alt="image-20210214193344085" style="zoom:20%;" /></p>
+<h4 id="Exhaustive-search-decoding"><a href="#Exhaustive-search-decoding" class="headerlink" title="Exhaustive search decoding"></a>Exhaustive search decoding</h4><p><strong>穷举搜索解码</strong></p>
+<ul>
+<li>理想情况下，我们想要找到一个(长度为T)让y最大化的翻译，如下图所示</li>
+<li>我们尝试计算所有可能的序列y<ul>
+<li>这意味着在解码器的每个step，我们遍历$V^t$个可能的部分翻译，其中$V$是词汇表的size，$O(V^t)$时间复杂度太高了！</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214193552.png" alt="image-20210214193551720" style="zoom:20%;" /></p>
+<h4 id="Beam-search-decoding"><a href="#Beam-search-decoding" class="headerlink" title="Beam search decoding"></a>Beam search decoding</h4><p>束搜索解码</p>
+<ul>
+<li>核心思想：在解码器每一个step上，遍历k个最可能的部分翻译(这个我们叫假设)<ul>
+<li>k是约束大小(实际上值为5-10)</li>
+</ul>
+</li>
+<li>假设$y_1, \cdots, y_t$有一个其对数概率的分数，如下图所示<ul>
+<li>所有分数是负数，分数越高表示更好的结果</li>
+<li>我们在每个step上遍历Top-k个来搜索高分数假设,这里Top-k不仅仅是当前$\hat y$最高的几个概率，而是截止到目前这条路径上的累计概率之和。</li>
+</ul>
+</li>
+<li>束搜索不确保找到最优解</li>
+<li>但比穷举搜索更有效率</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214194330.png" alt="image-20210214194328812" style="zoom:20%;" /></p>
+<p>如下图中，束搜索size=2时，第一个timestep保留的Top-2词为<code>he</code>和<code>I</code>，它们分别作为下一个timestep的输入。</p>
+<p><code>he</code>输入预测输出Top-2是<code>hit</code>和<code>struck</code>，<code>hit</code>这条路径上累加概率是 <code>he</code>加上 <code>hit</code>为-1.7。同样计算其它词对应路径的概率分数。最后在这4条路径上保留$k=2$条路。所以保留 <code>hit</code>和 <code>was</code>。将其作为下一个timestep的输入；那么 <code>struck</code>和 <code>got</code>对应路径应该被剪枝。这就是，对k个假设逐个，找到top k下一个词并计算其分数。 </p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214200251.png" alt="image-20210214200249928" style="zoom:20%;" /></p>
+<p>再下一个timestep同样计算，剪枝后保留<code>a</code>和<code>me</code>。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210215165422.png" alt="image-20210214200232110" style="zoom:20%;" /></p>
+<p>最终搜索树如下图所示，以看到在每个时间步都只保留了k=2个节点往下继续搜索。最后<code>pie</code>对应的路径打分最高，通过回溯法得到概率最高的翻译句子。请注意，束搜索作为一种剪枝策略，并不能保证得到全局最优解，但它能以较大的概率得到全局最优解，同时相比于穷举搜索极大的提高了搜索效率。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214220134.png" alt="image-20210214220133325" style="zoom:20%;" /></p>
+<h4 id="Beam-search-decoding-stopping-criterion"><a href="#Beam-search-decoding-stopping-criterion" class="headerlink" title="Beam search decoding: stopping criterion"></a>Beam search decoding: stopping criterion</h4><p>束搜索解码：停止标准</p>
+<ul>
+<li>在贪婪解码里，通常我们解码知道模型输出一个<code>&lt;END&gt;</code>结束标志符。<ul>
+<li>例子： <code>&lt;START&gt;</code>he hit me with a pie <code>&lt;END&gt;</code></li>
+</ul>
+</li>
+<li>在束约束搜索解码里，不同路径预测输出 <code>&lt;END&gt;</code> 结束标志符的timestep可能不一样，有些路径可能提取结束了，称为完全路径，暂时把这些完全路径放一边，其他路径接着束搜索。</li>
+<li>通常我们继续束搜索直到：<ul>
+<li>我们达到timestep T(其中T是提取设置的中断条件)</li>
+<li>或者我们至少有n个完成的路径(其中n是提取设置的中断条件)</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214220625.png" alt="image-20210214220623849" style="zoom:20%;" /></p>
+<h4 id="Beam-search-decoding-finishing-up"><a href="#Beam-search-decoding-finishing-up" class="headerlink" title="Beam search decoding: finishing up"></a>Beam search decoding: finishing up</h4><p>束搜索解码：结束</p>
+<ul>
+<li>我们有了完全的假设(路径)列表。</li>
+<li>怎么选择有最高分的top one?</li>
+<li>每个假设$y_1, \cdots, y_t$在列表里都有一个分数，如下图。</li>
+<li>问题在于：假设越长，分数越低。在搜索路径上，累加得越多分越低，所有根据长度对打分进行归一化。</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214221531.png" alt="image-20210214221530118" style="zoom:20%;" /></p>
+<blockquote>
+<p>NMT相比于SMT的优点：</p>
+<ol>
+<li>性能更好，表现在：翻译更流程，RNN擅长语言模型；能更好的利用上下文关系；能利用短语相似性</li>
+<li>模型更简单，只需要一个神经网络，端到端训练即可，简单方便</li>
+<li>不需要很多的人工干预和特征工程，对于不同的语言，网络结构保持一样，只需要换一下词向量</li>
+</ol>
+<p>NMT的不足：</p>
+<ol>
+<li>难以解释，表现在：难以调试，难以解释出错原因</li>
+<li>难以控制，比如难以加入一些人工的规则，难以控制NMT不输出什么，由此可能会脑一些笑话甚至导致安全问题</li>
+</ol>
+</blockquote>
+<h4 id="How-do-we-evaluate-Machine-Translation"><a href="#How-do-we-evaluate-Machine-Translation" class="headerlink" title="How do we evaluate Machine Translation?"></a>How do we evaluate Machine Translation?</h4><p>怎么评价机翻?</p>
+<p><strong>BLEU</strong> (Bilingual Evaluation Understudy  )</p>
+<ul>
+<li>BLEU将机翻和人工翻译(一个或多个)进行比较重叠部分，具体公式看Assignment 4，然后基于这个计算一个相似分数<ul>
+<li>n-gram精度</li>
+<li>过短的机翻加上一个惩罚</li>
+</ul>
+</li>
+<li>BLEU 有用但不完美<ul>
+<li>有许多有效的方法来翻译一个句子</li>
+<li>所以一个好的翻译可能得到一个糟糕的分数因为它和人工翻译有较低的n-gram重叠</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214232535.png" alt="image-20210214232534422" style="zoom:20%;" /></p>
+<h4 id="MT-progress-over-time"><a href="#MT-progress-over-time" class="headerlink" title="MT progress over time"></a>MT progress over time</h4><p>数据来源于(<a target="_blank" rel="noopener" href="http://www.meta-net.eu/events/meta-forum-2016/slides/09_sennrich.pdf">http://www.meta-net.eu/events/meta-forum-2016/slides/09_sennrich.pdf</a>)</p>
+<blockquote>
+<p>神经机器翻译于2014年从边缘研究活动到2016年成为领先标准方法</p>
+<ul>
+<li>2014：第一篇 seq2seq 的文章发布</li>
+<li>2016：谷歌翻译从 SMT 换成了 NMT</li>
+<li>这是惊人的，由数百名工程师历经多年打造的SMT系统，在短短几个月内就被少数工程师训练过的NMT系统超越</li>
+</ul>
+<p><strong>So is Machine Translation solved?</strong></p>
+<ul>
+<li>不！</li>
+<li>许多困难仍然存在<ul>
+<li>词表外的单词处理</li>
+<li>训练和测试数据之间的 <strong>领域不匹配</strong></li>
+<li>在较长文本上维护上下文</li>
+<li>资源较低的语言对</li>
+</ul>
+</li>
+<li>使用常识仍然很难</li>
+</ul>
+</blockquote>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214233124.png" alt="image-20210214233122492" style="zoom:20%;" /></p>
+<h4 id="NMT-research-continues"><a href="#NMT-research-continues" class="headerlink" title="NMT research continues"></a>NMT research continues</h4><p>NMT是NLP深度学习的旗舰</p>
+<ul>
+<li>NMT研究引领了NLP深度学习的许多创新</li>
+<li>在2021：NMT研究继续蓬勃发展<ul>
+<li>研究这已经找到许多，许多改进在我们刚刚提到的“原生的” seq2seq NMT系统</li>
+<li>但是我们将在接下来介绍新的一种不可或缺的改进——Attention!</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214233514.png" alt="image-20210214233512856" style="zoom:20%;" /></p>
+<h3 id="Section-3-Attention"><a href="#Section-3-Attention" class="headerlink" title="Section 3: Attention"></a>Section 3: Attention</h3><h4 id="Sequence-to-sequence-the-bottleneck-problem"><a href="#Sequence-to-sequence-the-bottleneck-problem" class="headerlink" title="Sequence-to-sequence: the bottleneck problem"></a>Sequence-to-sequence: the bottleneck problem</h4><p>seq2seq: 瓶颈问题</p>
+<p>在下图中，Encoder RNN 的最后一个神经元的隐状态作为Decoder RNN的初始隐状态，也就是说Encoder的最后一个隐状态向量需要承载源句子的所有信息，成为整个模型的“信息”瓶颈。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214234912.png" alt="image-20210214234910353" style="zoom:20%;" /></p>
+<p>在最后一个隐藏状态，需要获取的全部关于源句子的信息。这就是瓶颈问题。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214235213.png" alt="image-20210214235212101" style="zoom:20%;" /></p>
+<h4 id="Attention"><a href="#Attention" class="headerlink" title="Attention"></a>Attention</h4><ul>
+<li>注意机制提供了解决瓶颈问题的方法</li>
+<li>核心思想：在每一步都解码，用直连解码器来专注于源句子中特殊的部分</li>
+<li>开始我们用图来说明，然后用方程。</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210214235653.png" alt="image-20210214235651799" style="zoom:20%;" /></p>
+<h4 id="Sequence-to-sequence-with-attention"><a href="#Sequence-to-sequence-with-attention" class="headerlink" title="Sequence-to-sequence with attention"></a>Sequence-to-sequence with attention</h4><blockquote>
+<p>具体来说，在时刻t，Decoder第t时刻的隐状态$s_t$和Encoder所有时刻的隐状态$h_1, \cdots, h_n$做点积，得到N个标量Attention score，作为Encoder每个隐状态的权重，然后使用softmax对这些权重进行归一化，得到Attention distribution。这个Attention distribution相当于Decoder在时刻t对Encoder所有隐状态的注意力分布，如下第3张图所示，”he”时刻的注意力主要分布在Encoder的第2和第4个词上，这不正是前面介绍的SMT的对齐alignment操作吗！Attention自动学习到了这种对齐操作，只不过是soft alignment。</p>
+<p>接下来，对Encoder所有隐状态使用Attention distribution进行加权平均，得到Attention output $a_t$。把$a_t$和该时刻的隐状态$s_t$拼起来再进行非线性变换得到输出$\hat y_2$。有时，也可以把上一时刻的Attention output和当前的输入词向量拼起来作为一个新的输入，输入到Decoder RNN中。</p>
+</blockquote>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210215144452.png" alt="image-20210215144443366" style="zoom:20%;" /></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210215144933.png" alt="image-20210215144932320" style="zoom:20%;" /></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210215145002.png" alt="image-20210215145000723" style="zoom:20%;" /></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210215150328.png" alt="image-20210215150326981" style="zoom:20%;" /></p>
+<h4 id="Attention-in-equations"><a href="#Attention-in-equations" class="headerlink" title="Attention: in equations"></a>Attention: in equations</h4><ul>
+<li>编码器的隐状态$h_1, \cdots, h_n \in \mathbb{R}^h$</li>
+<li>在timestep $t$, 解码器隐状态为$s_t \in \mathbb{R}^h$</li>
+<li>得到该时刻$t$的注意力分数</li>
+</ul>
+<script type="math/tex; mode=display">
+\mathbf{e}^t = [\mathbf{s}_t^T\mathbf{h}_1, \cdots,\mathbf{s}_t^T\mathbf{h}_N   ] \in \mathbb{R}^N</script><ul>
+<li>对$\mathbf{e}^t $取softmax得到注意力分布$\mathbf{\alpha}^t $(这是一个概率分布，和为1)</li>
+</ul>
+<script type="math/tex; mode=display">
+\mathbf{\alpha}^t = \text{softmax}(\mathbf{e}^t ) \in \mathbb{R}^N</script><ul>
+<li>将$\mathbf{\alpha}^t $  和编码器隐状态$\mathbf{h} $点乘得到注意力输出$\mathbf{a}_t $</li>
+</ul>
+<script type="math/tex; mode=display">
+\mathbf{a}_t = \sum_{i=1}^N \alpha_i^t\mathbf{h}_i \in \mathbb{R}^N</script><ul>
+<li>最后，将注意力输出$\mathbf{a}_t $和解码器隐状态$s_t$拼起来，并按照非注意力seq2seq模型运行$[\mathbf{a}_t; \mathbf{s}_t  ] \in \mathbb{R}^{2h}$</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210215151757.png" alt="image-20210215151755989" style="zoom:20%;" /></p>
+<h4 id="Attention-is-great"><a href="#Attention-is-great" class="headerlink" title="Attention is great"></a>Attention is great</h4><blockquote>
+<ul>
+<li>注意力显著提高了NMT性能<ul>
+<li>这是非常有用的，让解码器专注于某些部分的源语句</li>
+</ul>
+</li>
+<li>注意力解决瓶颈问题<ul>
+<li>注意力允许解码器直接查看源语句；绕过瓶颈</li>
+</ul>
+</li>
+<li>注意力帮助消失梯度问题<ul>
+<li>提供了跟短接远处状态的方式</li>
+</ul>
+</li>
+<li>注意力提供了一些可解释性<ul>
+<li>通过检查注意力的分布，我们可以看到解码器在关注什么</li>
+<li>我们可以轻松得到(软)对齐</li>
+<li>这很酷，因为我们从来没有明确训练过对齐系统</li>
+<li>网络只是自主学习了对齐</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210215153929.png" alt="image-20210215153928196" style="zoom:20%;" /></p>
+<h4 id="Attention-is-a-general-Deep-Learning-technique"><a href="#Attention-is-a-general-Deep-Learning-technique" class="headerlink" title="Attention is a general Deep Learning technique"></a>Attention is a general Deep Learning technique</h4><ul>
+<li>我们已经看到attention是一种改进机翻的seq2seq模型很好的方法</li>
+<li>然而，你可以在许多架构中用attention</li>
+<li>注意力更普遍的定义是：<ul>
+<li>给定一系列向量的值，或者向量查询队列，attention是一种计算关于查询队列与向量值权重和的技术</li>
+</ul>
+</li>
+<li>我们有时说，查询注意到哪些值</li>
+<li>例如，在seq2seq + attention 模型中，每个解码器的隐状态查询注意到首页解码器隐状态的某一些值。</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210215154327.png" alt="image-20210215154326539" style="zoom:20%;" /></p>
+<p><strong>直觉</strong></p>
+<ul>
+<li>加权和是值中包含的信息的选择性汇总，查询在其中确定要关注哪些值</li>
+<li>注意是一种获取任意一组表示(值)的固定大小表示的方法，依赖于其他一些表示(查询)。</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210215154346.png" alt="image-20210215154345002" style="zoom:20%;" /></p>
+<h4 id="There-are-several-attention-variants"><a href="#There-are-several-attention-variants" class="headerlink" title="There are several attention variants"></a>There are several attention variants</h4><ul>
+<li>一个值的集合$\mathbf{h}_1, \cdots, \mathbf{h}_n \in \mathbb{R}^{d_1}$，一个 查询$\mathbf{s} \in \mathbb{R}^{d_2}$</li>
+<li>Attention总是包括<ul>
+<li>计算注意力分数</li>
+<li>对分数取softmax得到注意力分布</li>
+<li>用注意力分布对隐状态值求权重和来获得注意力输出$\mathbf{a}$</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210215155634.png" alt="image-20210215155633285" style="zoom:20%;" /></p>
+<p><strong>Attention 变种</strong></p>
+<p>其实就是计算从编码器隐状态$\mathbf{h}_1, \cdots, \mathbf{h}_N \in \mathbb{R}^{d_1}$和解码器隐状态$\mathbf{s} \in \mathbb{R}^{d_2}$计算attention分数$\mathbf{e} \in \mathbb{R}^{N}$的几种方式：</p>
+<ul>
+<li>基本点积注意力：$\mathbf{e}_i = \mathbf{s}^T \mathbf{h}_i \in \mathbb{R}$，注假设$d_1= d2$,这就是我们之前见到的</li>
+<li>乘法注意力：$\mathbf{e}_i = \mathbf{s}^T \mathbf{W} \mathbf{h}_i \in \mathbb{R}$, 其中$\mathbf{W} \in \mathbb{R}^{d_2 \times d_1}$是权重矩阵</li>
+<li>加法注意力：$\mathbf{e}_i = \mathbf{v}^T \text{tanh }(\mathbf{W}_1 \mathbf{h}_i + \mathbf{W}_2 \mathbf{s}) \in \mathbb{R}$. 其中$\mathbf{W}_1 \in \mathbb{R}^{d_3 \times d_1}, \ \mathbf{W}_2 \in \mathbb{R}^{d_3 \times d_2}$是权重矩阵，$\mathbf{v}\in \mathbb{R}^{d_3}$是权重向量，$d_3$是超参数</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210215155710.png" alt="image-20210215155708656" style="zoom:20%;" /></p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210215164338.png" alt="image-20210215164336654" style="zoom:20%;" /></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>[1] <a target="_blank" rel="noopener" href="http://web.stanford.edu/class/cs224n/slides/cs224n-2021-lecture07-nmt.pdf">cs224n-2021-lecture07-nmt</a></p>
+<p>[2] <a target="_blank" rel="noopener" href="http://web.stanford.edu/class/cs224n/readings/cs224n-2019-notes06-NMT_seq2seq_attention.pdf">cs224n-2019-notes06-NMT_seq2seq_attention</a></p>
+<p>[3] <a target="_blank" rel="noopener" href="https://ruder.io/deep-learning-nlp-best-practices/index.html">Deep Learning for NLP Best Practices</a></p>
+<p>[4] <a target="_blank" rel="noopener" href="https://bitjoy.net/2019/08/02/cs224n%ef%bc%881-31%ef%bc%89translation-seq2seq-attention/">CS224N（1.31）Translation, Seq2Seq, Attention</a></p>
+<p>[5] <a target="_blank" rel="noopener" href="https://blog.csdn.net/u011613991/article/details/105616634">Machine Translation, Seq2Seq and Attention</a></p>
+<p>[6] <a target="_blank" rel="noopener" href="https://looperxx.github.io/CS224n-2019-08-Machine%20Translation%2C%20Sequence-to-sequence%20and%20Attention/">Science is interesting.08 Machine Translation, Sequence-to-sequence and Attenti</a></p>
+<p>[7] <a target="_blank" rel="noopener" href="https://blog.csdn.net/RHJlife/article/details/107321601">MachineTranslation seq2seq Attention</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">miller</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2020/12/14/CS224N%20Lecture%207%20Machine%20Translation,%20Attention,%20Subword%20Models/">http://example.com/2020/12/14/CS224N%20Lecture%207%20Machine%20Translation,%20Attention,%20Subword%20Models/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">AIgonna</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CS224n/">CS224n</a><a class="post-meta__tags" href="/tags/%E6%9C%BA%E7%BF%BB/">机翻</a><a class="post-meta__tags" href="/tags/SMT/">SMT</a><a class="post-meta__tags" href="/tags/NMT/">NMT</a><a class="post-meta__tags" href="/tags/Beam-search/">Beam search</a><a class="post-meta__tags" href="/tags/Attention/">Attention</a></div><div class="post_share"><div class="social-share" data-image="/img/imgs/14.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.png" target="_blank"><img class="post-qr-code-img" src="/img/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.png" target="_blank"><img class="post-qr-code-img" src="/img/alipay.png" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/01/28/hexo+butterfly/"><img class="prev-cover" src="/img/imgs/6.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">hexo + butterfly blog安装</div></div></a></div><div class="next-post pull-right"><a href="/2020/12/14/hexo+matrey%20blog%E6%90%AD%E5%BB%BA/"><img class="next-cover" src="/img/imgs/7.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">1. Hexo + Matery blog 搭建</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/12/12/CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq/" title="CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq"><img class="cover" src="/img/imgs/14.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-12</div><div class="title">CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq</div></div></a></div><div><a href="/2020/12/10/CS224N Lecture 5 Recurrent Neural Networks and Language Models/" title="CS224N Lecture 5 Recurrent Neural Networks and Language Models"><img class="cover" src="/img/imgs/5.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-10</div><div class="title">CS224N Lecture 5 Recurrent Neural Networks and Language Models</div></div></a></div><div><a href="/2020/12/08/CS224N Lecture 4 Dependency Parsing/" title="CS224n Lecture 4 Dependency Parsing"><img class="cover" src="/img/imgs/8.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-08</div><div class="title">CS224n Lecture 4 Dependency Parsing</div></div></a></div><div><a href="/2020/12/06/CS224N Lecture 3 Backprop and Neural Networks/" title="CS224N Lecture 3 Backprop and Neural Networks"><img class="cover" src="/img/imgs/14.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-06</div><div class="title">CS224N Lecture 3 Backprop and Neural Networks</div></div></a></div><div><a href="/2020/12/04/CS224N Lecture 2 Word Vectors 2 and Word Senses/" title="CS224n Lecture 2 Word Vectors,Word Senses, and Classifier Review"><img class="cover" src="/img/imgs/11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-04</div><div class="title">CS224n Lecture 2 Word Vectors,Word Senses, and Classifier Review</div></div></a></div><div><a href="/2020/12/02/CS224N Lecture 1 Introduction and Word Vectors/" title="CS224N Lecture 1 Introduction and Word Vectors"><img class="cover" src="/img/imgs/9.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-02</div><div class="title">CS224N Lecture 1 Introduction and Word Vectors</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Section-1-Machine-Translation"><span class="toc-number">1.</span> <span class="toc-text">Section 1: Machine Translation</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1990s-2010s-Statistical-Machine-Translation"><span class="toc-number">1.1.</span> <span class="toc-text">1990s-2010s: Statistical Machine Translation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Learning-alignment-for-SMT"><span class="toc-number">1.2.</span> <span class="toc-text">Learning alignment for SMT</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#What-is-alignment"><span class="toc-number">1.3.</span> <span class="toc-text">What is alignment?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Learning-alignment-for-SMT-1"><span class="toc-number">1.4.</span> <span class="toc-text">Learning alignment for SMT</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Decoding-for-SMT"><span class="toc-number">1.5.</span> <span class="toc-text">Decoding for SMT</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Section-2-Neural-Machine-Translation"><span class="toc-number">2.</span> <span class="toc-text">Section 2: Neural Machine Translation</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#What-is-Neural-Machine-Translation"><span class="toc-number">2.1.</span> <span class="toc-text">What is Neural Machine Translation?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Neural-Machine-Translation-NMT"><span class="toc-number">2.2.</span> <span class="toc-text">Neural Machine Translation (NMT)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Training-a-Neural-Machine-Translation-system"><span class="toc-number">2.3.</span> <span class="toc-text">Training a Neural Machine Translation system</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Multi-layer-RNNs"><span class="toc-number">2.4.</span> <span class="toc-text">Multi-layer RNNs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Multi-layer-deep-encoder-decoder-machine-translation-net"><span class="toc-number">2.5.</span> <span class="toc-text">Multi-layer deep encoder-decoder machine translation net</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Greedy-decoding"><span class="toc-number">2.6.</span> <span class="toc-text">Greedy decoding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Exhaustive-search-decoding"><span class="toc-number">2.7.</span> <span class="toc-text">Exhaustive search decoding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Beam-search-decoding"><span class="toc-number">2.8.</span> <span class="toc-text">Beam search decoding</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Beam-search-decoding-stopping-criterion"><span class="toc-number">2.9.</span> <span class="toc-text">Beam search decoding: stopping criterion</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Beam-search-decoding-finishing-up"><span class="toc-number">2.10.</span> <span class="toc-text">Beam search decoding: finishing up</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#How-do-we-evaluate-Machine-Translation"><span class="toc-number">2.11.</span> <span class="toc-text">How do we evaluate Machine Translation?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MT-progress-over-time"><span class="toc-number">2.12.</span> <span class="toc-text">MT progress over time</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#NMT-research-continues"><span class="toc-number">2.13.</span> <span class="toc-text">NMT research continues</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Section-3-Attention"><span class="toc-number">3.</span> <span class="toc-text">Section 3: Attention</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Sequence-to-sequence-the-bottleneck-problem"><span class="toc-number">3.1.</span> <span class="toc-text">Sequence-to-sequence: the bottleneck problem</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Attention"><span class="toc-number">3.2.</span> <span class="toc-text">Attention</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Sequence-to-sequence-with-attention"><span class="toc-number">3.3.</span> <span class="toc-text">Sequence-to-sequence with attention</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Attention-in-equations"><span class="toc-number">3.4.</span> <span class="toc-text">Attention: in equations</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Attention-is-great"><span class="toc-number">3.5.</span> <span class="toc-text">Attention is great</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Attention-is-a-general-Deep-Learning-technique"><span class="toc-number">3.6.</span> <span class="toc-text">Attention is a general Deep Learning technique</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#There-are-several-attention-variants"><span class="toc-number">3.7.</span> <span class="toc-text">There are several attention variants</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.8.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021&nbsp;<i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;"class="fas fa-heart"></i> By miller</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    loader: {
+      source: {
+        '[tex]/amsCd': '[tex]/amscd'
+      }
+    },
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        addClass: [200,() => {
+          document.querySelectorAll('mjx-container:not([display=\'true\']').forEach( node => {
+            const target = node.parentNode
+            if (!target.classList.contains('has-jax')) {
+              target.classList.add('mathjax-overflow')
+            }
+          })
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'forest',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: '5sVUTO1MTpgoo7pDynh6zYEM-MdYXbMMI',
+      appKey: 'vPUvOT1iP6YqcPPtYSqf8F7A',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign(initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script><h4>AIgonna</h4></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script></div></body></html>

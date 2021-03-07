@@ -1,0 +1,451 @@
+<!DOCTYPE html><html class="hide-aside" lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>5. 指针 | AIgonna</title><meta name="keywords" content="C++,指针"><meta name="author" content="miller"><meta name="copyright" content="miller"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="5. 指针1. 指针的引用123456789101112131415161718192021# include &lt;iostream&gt;using namespace std;int main()&amp;#123;    int a &#x3D; 112, b &#x3D; 1;    float c &#x3D; 3.14f;    int* d &#x3D; &amp;a;    float* e &#x3D; &amp;c;    cou">
+<meta property="og:type" content="article">
+<meta property="og:title" content="5. 指针">
+<meta property="og:url" content="http://example.com/2020/06/02/5.%20%E6%8C%87%E9%92%88/index.html">
+<meta property="og:site_name" content="AIgonna">
+<meta property="og:description" content="5. 指针1. 指针的引用123456789101112131415161718192021# include &lt;iostream&gt;using namespace std;int main()&amp;#123;    int a &#x3D; 112, b &#x3D; 1;    float c &#x3D; 3.14f;    int* d &#x3D; &amp;a;    float* e &#x3D; &amp;c;    cou">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/imgs/9.jpg">
+<meta property="article:published_time" content="2020-06-02T13:49:39.000Z">
+<meta property="article:modified_time" content="2021-01-28T14:11:30.352Z">
+<meta property="article:author" content="miller">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="指针">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/imgs/9.jpg"><link rel="shortcut icon" href="/img/AI.png"><link rel="canonical" href="http://example.com/2020/06/02/5.%20%E6%8C%87%E9%92%88/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-01-28 22:11:30'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 5.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/AI.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">34</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/imgs/9.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">AIgonna</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">5. 指针</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2020-06-02T13:49:39.000Z" title="undefined 2020-06-02 21:49:39">2020-06-02</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Cpp/">Cpp</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="5-指针"><a href="#5-指针" class="headerlink" title="5. 指针"></a>5. 指针</h2><h3 id="1-指针的引用"><a href="#1-指针的引用" class="headerlink" title="1. 指针的引用"></a>1. 指针的引用</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">112</span>, b = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">float</span> c = <span class="number">3.14f</span>;</span><br><span class="line">    <span class="keyword">int</span>* d = &amp;a;</span><br><span class="line">    <span class="keyword">float</span>* e = &amp;c;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; d &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; e &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; (*d )&lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; (*e) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">OUT:</span><br><span class="line"><span class="number">0xa1fe04</span></span><br><span class="line"><span class="number">0xa1fe00</span></span><br><span class="line"><span class="number">112</span></span><br><span class="line"><span class="number">3.14</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-左值和右值"><a href="#2-左值和右值" class="headerlink" title="2. 左值和右值"></a>2. 左值和右值</h3><p>一般说法，编译器为其单独分配了一块存储空间，可以取其地址的，左值可以放在赋值运算符左边；</p>
+<p>右值是数据本身，不能取到其自身地址，右值只能赋值运算右边。</p>
+<p>具体来说：</p>
+<ul>
+<li>左值最常见的情况如函数和数据成员的名字；</li>
+<li>右值是没有标识符、不可以取地址的表达式，一般称之为“临时对象”</li>
+<li><code>&amp;a</code>是允许的，而<code>&amp;(b+c)</code>不能通过编译，因此a是一个左值，(b+c)是一个右值</li>
+</ul>
+<h3 id="3-指针的数组、数组的指针"><a href="#3-指针的数组、数组的指针" class="headerlink" title="3. 指针的数组、数组的指针"></a>3. 指针的数组、数组的指针</h3><ul>
+<li>指针的数组 array of pointers : <code>T* t[]</code></li>
+<li>数组的指针 a pointer to an array : <code>T (*t) []</code> <code>[]</code>优先级比较高</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">4</span>;</span><br><span class="line">    <span class="keyword">int</span>* iP = &amp;i;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; (*iP) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">double</span> d = <span class="number">3.14</span>;</span><br><span class="line">    <span class="keyword">double</span> * dP = &amp;d;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; (*dP) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">char</span> c = <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">    <span class="keyword">char</span> * cP = &amp;c;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; (*cP) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-OUT:</span><br><span class="line">    <span class="number">4</span></span><br><span class="line">    <span class="number">3.14</span></span><br><span class="line">    a</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// array of pointers 和 a pointer to an array</span></span><br><span class="line">    <span class="keyword">int</span> c[<span class="number">4</span>] = &#123;<span class="number">0x40000000</span>, <span class="number">0x4FFFFFFF</span>, <span class="number">0x00000000</span>, <span class="number">0x7FFFFFFF</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span>* a[<span class="number">4</span>]; <span class="comment">//array of pointers</span></span><br><span class="line">    <span class="keyword">int</span>(*b) [<span class="number">4</span>]; <span class="comment">// a pointer to an array</span></span><br><span class="line">    b = &amp;c; <span class="comment">//这里数组个数得匹配，</span></span><br><span class="line">    <span class="comment">// 将数组c中元素赋给数组a</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> i = <span class="number">0</span>; i&lt;<span class="number">4</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        a[i] = &amp;(c[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; *(a[<span class="number">0</span>]) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; *(b) [<span class="number">3</span>] &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">-OUT:</span><br><span class="line"><span class="number">1073741824</span></span><br><span class="line"><span class="number">2147483647</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-const-pointer-与-pointer-to-const"><a href="#4-const-pointer-与-pointer-to-const" class="headerlink" title="4. const pointer 与 pointer to const"></a>4. const pointer 与 pointer to const</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span>  strHelloworld[] = &#123;<span class="string">&quot;helloworld&quot;</span>&#125;; </span><br><span class="line"><span class="keyword">char</span> <span class="keyword">const</span>  *pStr1 = <span class="string">&quot;helloworld&quot;</span>;</span><br><span class="line"><span class="comment">// 修饰char 说明内容是不可改变的</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *pStr1 = <span class="string">&quot;helloworld&quot;</span>; </span><br><span class="line"><span class="comment">// 修更常见的写法</span></span><br><span class="line"><span class="keyword">char</span>* <span class="keyword">const</span>  pStr2 = <span class="string">&quot;helloworld&quot;</span>;</span><br><span class="line"><span class="comment">// 修饰指针， 说明不变的是地址</span></span><br><span class="line"><span class="keyword">char</span> <span class="keyword">const</span> * <span class="keyword">const</span> pStr3 = <span class="string">&quot;helloworld&quot;</span>;</span><br><span class="line"><span class="comment">//两个const分别修饰char和指针，说明内容和地址都不可改变</span></span><br><span class="line">pStr1 = strHelloworld;</span><br><span class="line"><span class="comment">//pStr2 = strHelloworld; //pStr2不可改</span></span><br><span class="line"><span class="comment">//pStr3 = strHelloworld; //pStr3不可改</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>关于<code>const</code>修饰部分：<ol>
+<li>看左侧最近的部分</li>
+<li>如果左侧没有，则看右侧</li>
+</ol>
+</li>
+</ul>
+<h3 id="5-指针的指针"><a href="#5-指针的指针" class="headerlink" title="5. 指针的指针"></a>5. 指针的指针</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">12</span>;</span><br><span class="line"><span class="keyword">int</span>* b = &amp;a;</span><br><span class="line"><span class="keyword">int</span>** c = &amp;b;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>*</code>操作符具有从右向左的结合性， <code>**</code>相当于<code>*(*c)</code>,必须从里向外逐层求值，<code>*c</code>是c指向的位置，即b；<code>**c</code>相当于 <code>*b</code>，得到变量a的值。</li>
+</ul>
+<h3 id="6-NULL"><a href="#6-NULL" class="headerlink" title="6. NULL"></a>6. NULL</h3><p><code>int* a = NULL</code></p>
+<ul>
+<li>一个特殊的指针变量，表示不指向任何东西</li>
+<li>它给了一种方法，来表示特定的指针目前未指向任何东西</li>
+<li>使用注意事项：<ul>
+<li>对于一个指针，如果已经知道江北初始化为什么样的地址，那么请赋给它这个地址值，否则把它设为<strong>NULL</strong></li>
+<li>在对一个指针进行间接引用前，请先判断这个指针的值是否为<strong>NULL</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">123</span>;</span><br><span class="line">    <span class="keyword">int</span> *b = &amp;a;</span><br><span class="line">    <span class="keyword">int</span> **c = &amp;b;</span><br><span class="line">    <span class="comment">// NULL 的使用</span></span><br><span class="line">    <span class="keyword">int</span> *pA = <span class="literal">NULL</span>;</span><br><span class="line">    pA = &amp;a;</span><br><span class="line">    <span class="keyword">if</span> (pA != <span class="literal">NULL</span>)&#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; (*pA) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    pA = <span class="literal">NULL</span>; <span class="comment">// 不用时一定又置为NULL</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">&#125;</span><br><span class="line">OUT：</span><br><span class="line"><span class="number">123</span></span><br></pre></td></tr></table></figure>
+<h4 id="杜绝“-野-”指针"><a href="#杜绝“-野-”指针" class="headerlink" title="杜绝“ 野 ”指针"></a>杜绝“ 野 ”指针</h4><ul>
+<li>指向“垃圾”内存的指针。if判断对其不起作用，因为不为NULL。</li>
+</ul>
+<p>一般有三种情况：</p>
+<ol>
+<li>指针变量没有初始化</li>
+<li>已经释放不用的指针没有置NULL，如delete和free之后的指针</li>
+<li>指针操作超越了变量的作用范围</li>
+</ol>
+<p><strong>Note：</strong> <strong>没有初始化的，不用的或者超出范围的指针请把值置为NULL。</strong></p>
+<h3 id="7-指针相关操作符"><a href="#7-指针相关操作符" class="headerlink" title="7. 指针相关操作符"></a>7. 指针相关操作符</h3><p><code>&amp; 与 *</code> 的比较：</p>
+<p>左值取地址，右值取地址里的内容。</p>
+<p><strong>左值和右值？？</strong></p>
+<h3 id="8-与-操作符"><a href="#8-与-操作符" class="headerlink" title="8. ++ 与  - - 操作符"></a>8. ++ 与  - - 操作符</h3><ul>
+<li><code>++ i</code> : 先++， 再赋值给<code>i</code></li>
+<li><code>i++</code>: 先赋值给i, 再++</li>
+</ul>
+<p><strong>++i和i++区别？？？</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>; b = <span class="number">2</span>; c;</span><br><span class="line">c = a+++b; <span class="comment">// 相当于a++ +b</span></span><br><span class="line">d = a++++b; <span class="comment">// 相当于a++ ++b, error</span></span><br></pre></td></tr></table></figure>
+<h3 id="9-内存分析"><a href="#9-内存分析" class="headerlink" title="9. 内存分析"></a>9. 内存分析</h3><h4 id="1-栈和队列"><a href="#1-栈和队列" class="headerlink" title="1.栈和队列"></a>1.栈和队列</h4><ol>
+<li><p>栈区（stack）——由编译器自动分配释放 ，存放函数的参数值，局部变量的值等。其操作方式类似于数据结构中的栈。</p>
+</li>
+<li><p>堆区（heap）—— 一般由程序员分配释放， 若程序员不释放，程序结束时可能由OS回收 。注意它与数据结构中的堆是两回事，分配方式倒是类似于链表。</p>
+</li>
+<li>全局区（静态区）（static）——，全局变量和静态变量的存储是放在一块的，初始化的全局变量和静态变量在一块区域， 未初始化的全局变量和未初始化的静态变量在相邻的另一块区域。 - 程序结束后有系统释放</li>
+<li>文字常量区 ——常量字符串就是放在这里的。 程序结束后由系统释放</li>
+<li>程序代码区——存放函数体的二进制代码。</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">int</span> a = <span class="number">0</span>;                                                <span class="comment">//(GVAR)全局初始化区 </span></span><br><span class="line"><span class="keyword">int</span>* p1;                                                   <span class="comment">//(bss)全局未初始化区 </span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span>                                               <span class="comment">//(text)代码区</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">     <span class="keyword">int</span> b=<span class="number">1</span>;                                              <span class="comment">//(stack)栈区变量 </span></span><br><span class="line">     <span class="keyword">char</span> s[] = <span class="string">&quot;abc&quot;</span>;                                 <span class="comment">//(stack)栈区变量</span></span><br><span class="line">     <span class="keyword">int</span>*p2=<span class="literal">NULL</span>;                                     <span class="comment">//(stack)栈区变量</span></span><br><span class="line">     <span class="keyword">char</span> *p3 = <span class="string">&quot;123456&quot;</span>;                         <span class="comment">//123456\0在常量区, p3在(stack)栈区</span></span><br><span class="line">     <span class="keyword">static</span> <span class="keyword">int</span> c = <span class="number">0</span>;                                   <span class="comment">//(GVAR)全局(静态)初始化区 </span></span><br><span class="line">     p1 = <span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">10</span>);                               <span class="comment">//(heap)堆区变量</span></span><br><span class="line">     p2 = <span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">20</span>);                               <span class="comment">//(heap)堆区变量</span></span><br><span class="line">     <span class="keyword">char</span>* p4 = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">7</span>];                     <span class="comment">//(heap)堆区变量</span></span><br><span class="line">     strcpy_s(p4, <span class="number">7</span>, <span class="string">&quot;123456&quot;</span>);                  <span class="comment">//(text)代码区</span></span><br><span class="line"> </span><br><span class="line">     <span class="comment">//(text)代码区</span></span><br><span class="line">     <span class="keyword">if</span> (p1 != <span class="literal">NULL</span>)</span><br><span class="line">     &#123;</span><br><span class="line">         <span class="keyword">delete</span> p1;</span><br><span class="line">         p1 = <span class="literal">NULL</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span> (p2 != <span class="literal">NULL</span>)</span><br><span class="line">     &#123;</span><br><span class="line">         <span class="keyword">delete</span> p2;</span><br><span class="line">         p2 = <span class="literal">NULL</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span> (p4 != <span class="literal">NULL</span>)</span><br><span class="line">     &#123;</span><br><span class="line">         <span class="keyword">delete</span>[ ] p4;</span><br><span class="line">         p4 = <span class="literal">NULL</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="comment">//(text)代码区</span></span><br><span class="line">     <span class="keyword">return</span> <span class="number">0</span>;                                            <span class="comment">//(text)代码区</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/miller999999/pic/raw/master/img/blog4/cppstorage.png" alt="cppstorage" style="zoom: 80%;" /></p>
+<p><strong>堆heap——动态分配资源</strong>：</p>
+<ol>
+<li>从现代语言的编程角度看，使用堆，或者说使用内存分配是很自然的；</li>
+<li>动态内存带来了不确定性：内存分配耗时要多久？失败了怎么办？在实时性比较高的场合，如嵌入式控制器和电信设备。</li>
+<li>一般地，当我们在堆上分配内存时，很多语言使用new这样的关键字，有些语言则是隐式分配。在c++中new的对应词是delete，因为c++是可以让程序员完全结果内存的分配释放的。</li>
+</ol>
+<h4 id="2-资源管理方案——RAII"><a href="#2-资源管理方案——RAII" class="headerlink" title="2. 资源管理方案——RAII"></a>2. 资源管理方案——RAII</h4><p><strong>Resource Acquisition Is Initialization:</strong></p>
+<ul>
+<li>C++所特有的资源管理方式。主流语言中，C++是唯一一个依赖RAII做资源管理的</li>
+<li>RAII依托栈和析构函数，来对所有资源——包括堆内存在内进行管理。</li>
+<li>RAII有些比较成熟的智能指针代表：<code>std::auto_ptr</code>和<code>boost::shared_ptr</code></li>
+</ul>
+<h4 id="3-C-中栈和堆的对比"><a href="#3-C-中栈和堆的对比" class="headerlink" title="3. C++ 中栈和堆的对比"></a>3. C++ 中栈和堆的对比</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>stack</th>
+<th>heap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>作用域</td>
+<td>函数体内，语句块{}作用域；</td>
+<td>整个程序范围内，由new，malloc开始，delete， free结束</td>
+</tr>
+<tr>
+<td>编译期间大小确定</td>
+<td>变量大小范围确定</td>
+<td>变量大小范围不确定，需要运行期确定</td>
+</tr>
+<tr>
+<td>大小范围</td>
+<td>win：1M，linux默认8M或10M，可以用ulimit -s查询</td>
+<td>所有系统的堆空间大小是接近内存（虚拟内存）的总大小的（一部分被OS占用）</td>
+</tr>
+<tr>
+<td>内存分配方式</td>
+<td>地址由高到低减少</td>
+<td>地址由低到高增加</td>
+</tr>
+<tr>
+<td>内容是否可变</td>
+<td>可变</td>
+<td>可变</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="4-内存泄漏"><a href="#4-内存泄漏" class="headerlink" title="4. 内存泄漏"></a>4. 内存泄漏</h4><p><strong>定义</strong>：</p>
+<p>​    程序中已动态分配的<strong>堆内存由于某种原因程序未释放或无法释放</strong>，造成系统内存的浪费，导致<strong>程序运行速度减慢甚至系统崩溃等严重后果</strong>。</p>
+<p><strong>原因和排查方式</strong>：</p>
+<ol>
+<li>内存泄漏主要发生在堆内存分配方式中，即“配置内存后，所有指向该内存的指针都遗失了”。若缺乏语言的垃圾回收机制，这样的内存就无法归还系统。</li>
+<li>因为内存泄漏属于程序运行中的问题，无法通过编译识别，所以只能在程序运行过程中来判别和诊断。</li>
+</ol>
+<h3 id="10-C-的智能指针"><a href="#10-C-的智能指针" class="headerlink" title="10. C++的智能指针"></a>10. C++的智能指针</h3><p>C++中推出了四种常用的智能指针：</p>
+<ul>
+<li><code>unique_ptr</code></li>
+<li><code>shared_ptr</code></li>
+<li><code>weak_ptr</code>: C++ 11中已经被遗弃</li>
+<li><code>auto_ptr</code>：C++ 17中正式删除。</li>
+</ul>
+<p>从应用方面来分析这几种智能指针：</p>
+<ol>
+<li>应用场景<ul>
+<li>对象所有权</li>
+<li>生命周期</li>
+</ul>
+</li>
+<li>性能分析</li>
+</ol>
+<h4 id="1-auto-ptr"><a href="#1-auto-ptr" class="headerlink" title="1. auto_ptr"></a>1. auto_ptr</h4><p>由new expression 获得对象，在auto_ptr 对象销毁是，其所管理的对象也会被自动delete掉。</p>
+<p><strong>所有权转移</strong>：不小心把它传递给另外的智能指针，原来的指针就不在拥有这个对象了。<strong>转交给新对象，然后再将原对象指针置为nullptr。</strong></p>
+<p>示例：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#123;<span class="comment">// 这个大括号只是为了确定auto_ptr作用范围 int</span></span><br><span class="line">        <span class="function"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt; <span class="title">pl</span><span class="params">(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">10</span>))</span></span>;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; *pl &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// auto_ptr C++ 17中移除 拥有严格对象所有权语义的智能指针</span></span><br><span class="line">        <span class="comment">// auto_ptr 原理： 在拷贝和赋值过程中，直接剥夺原对象对内存的控制权，转交给新对象</span></span><br><span class="line">        <span class="comment">// 然后再将原对象指针置为nullptr，这种做法也叫管理权转移</span></span><br><span class="line">        <span class="comment">// 缺点：当我们再次去访问原对象是，程序就会报错，所以auto_ptr实现原理就不好</span></span><br><span class="line">        <span class="built_in">auto_ptr</span>&lt;<span class="built_in">string</span>&gt; languages[<span class="number">5</span>] =&#123;</span><br><span class="line">                <span class="built_in">auto_ptr</span>&lt;<span class="built_in">string</span>&gt;(<span class="keyword">new</span> <span class="built_in">string</span>(<span class="string">&quot;C&quot;</span>)),</span><br><span class="line">                <span class="built_in">auto_ptr</span>&lt;<span class="built_in">string</span>&gt;(<span class="keyword">new</span> <span class="built_in">string</span>(<span class="string">&quot;Java&quot;</span>)),</span><br><span class="line">                <span class="built_in">auto_ptr</span>&lt;<span class="built_in">string</span>&gt;(<span class="keyword">new</span> <span class="built_in">string</span>(<span class="string">&quot;C++&quot;</span>)),</span><br><span class="line">                <span class="built_in">auto_ptr</span>&lt;<span class="built_in">string</span>&gt;(<span class="keyword">new</span> <span class="built_in">string</span>(<span class="string">&quot;Python&quot;</span>)),</span><br><span class="line">                <span class="built_in">auto_ptr</span>&lt;<span class="built_in">string</span>&gt;(<span class="keyword">new</span> <span class="built_in">string</span>(<span class="string">&quot;GO&quot;</span>))</span><br><span class="line">        &#125;;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;There are some computer languagues here: \n&quot;</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; <span class="number">2</span>; ++i)&#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; *languages[i] &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">auto_ptr</span>&lt;<span class="built_in">string</span>&gt; pC;</span><br><span class="line">    pC = languages[<span class="number">2</span>];<span class="comment">//languages[2] 失去所有权，将languages[2]转交给pC</span></span><br><span class="line">    <span class="comment">// 此时languages[2]不再引用该字符串从而变成空指针</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;There are some computer languagues here: \n&quot;</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i &lt; <span class="number">2</span>; ++i)&#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; *languages[i] &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;The winner is &quot;</span> &lt;&lt; *pC &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">——————————————————————————————</span><br><span class="line"><span class="number">10</span></span><br><span class="line">There are some computer languagues here:</span><br><span class="line">C</span><br><span class="line">Java</span><br><span class="line">There are some computer languagues here:</span><br><span class="line">C</span><br><span class="line">Java</span><br><span class="line">The winner is C++</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="2-unique-ptr"><a href="#2-unique-ptr" class="headerlink" title="2. unique_ptr"></a>2. unique_ptr</h4><p><code>unique_ptr</code>:是专属所有权，所以<code>unique_ptr</code>管理的内存，只能被一个对象持有，不支持复制和赋值。</p>
+<p>移动语义：<code>unique_ptr</code>禁止了拷贝语义，但有时我们也需要能够转移所有权，用<code>std::move()</code>进行控制所有权的转移。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;    </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;    </span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;    </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;    </span><br><span class="line">    <span class="keyword">auto</span> w = <span class="built_in">std</span>::make_unique&lt;<span class="keyword">int</span>&gt;(<span class="number">10</span>);    </span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; *(w.get()) &lt;&lt; <span class="built_in">endl</span>;    </span><br><span class="line"></span><br><span class="line">    <span class="comment">//auto w2 = w;//编译错误，无法讲w复制给w2    </span></span><br><span class="line">    <span class="comment">//因为复制从语义上来说，两个对象将共享同一块内存    </span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// unique_ptr 只支持移动语义</span></span><br><span class="line">    <span class="keyword">auto</span> w2 = <span class="built_in">std</span>::move(w);   <span class="comment">// w2获得内存所有权，w此时等于nullptr                                                </span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; ((w.get() != <span class="literal">nullptr</span>)? (*w.get()):<span class="number">-1</span>) &lt;&lt; <span class="built_in">endl</span>;                    </span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; ((w2.get() != <span class="literal">nullptr</span>)?(*w2.get()):<span class="number">-1</span>) &lt;&lt; <span class="built_in">endl</span>;                   </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;                                                                 </span><br><span class="line">&#125;      </span><br><span class="line">——————————————————————————————————————</span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="number">-1</span></span><br><span class="line"><span class="number">10</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><code>cout &lt;&lt; ((w.get() != nullptr)? (*w.get()):-1) &lt;&lt; endl</code> 三目运算符， <code>(w.get() != nullptr)?</code>成立吗？成立取：前面，否则取：后面。</p>
+<h4 id="3-shared-ptr"><a href="#3-shared-ptr" class="headerlink" title="3. shared_ptr"></a>3. shared_ptr</h4><p><code>shared_ptr</code>通过一个引用计数共享一个对象。</p>
+<p><code>shared_ptr</code>是为了解决<code>auto_ptr</code>在对象所有权上的局限性，在使用<strong>引用计数的机制</strong>上提供了可以共享所有权的智能指针，当然也需要额外的开销。</p>
+<p><strong>当引用计数为0时，该对象没有被使用，可以进行析构</strong>。</p>
+<h4 id="4-weak-ptr"><a href="#4-weak-ptr" class="headerlink" title="4. weak_ptr"></a>4. weak_ptr</h4><p><code>weak_ptr</code>被设计为与 <code>shared_ptr</code>共同工作，用一种观察这模式工作。</p>
+<p>作用：协作 <code>shared_ptr</code>工作，可获得资源的观测权，像旁观者那样观测资源使用情况。</p>
+<p>意味着 <code>weak_ptr</code>只对 <code>shared_ptr</code>进行引用，而不改变其引用计数，当被观察的<code>shared_ptr</code>失效后，相应的 <code>weak_ptr</code>也相应失效。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;    </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;    </span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;    </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//shared_ptr</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// shared_ptr 代表的是共享所有权， 即多个shared_ptr 可以共享同一块内存</span></span><br><span class="line">        <span class="keyword">auto</span> wA = <span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">20</span>));</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">auto</span> wA2 = wA;</span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; ((wA2.get() != <span class="literal">nullptr</span>)? (*wA2.get()):<span class="number">-1</span>) &lt;&lt; <span class="built_in">endl</span>; <span class="comment">//20</span></span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; ((wA.get() != <span class="literal">nullptr</span>)? (*wA.get()):<span class="number">-1</span>) &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//20</span></span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; wA2.use_count() &lt;&lt; <span class="built_in">endl</span>; <span class="comment">//2 wA2.use_count() 引用计数</span></span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; wA.use_count() &lt;&lt; <span class="built_in">endl</span>; <span class="comment">//2</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//cout &lt;&lt; wA2.use_count() &lt;&lt; endl; //</span></span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; wA.use_count() &lt;&lt; <span class="built_in">endl</span>; <span class="comment">// 1</span></span><br><span class="line">        <span class="comment">// shared_ptr内部是利用计数来实现内存的自动管理，每当赋值一个shared_ptr</span></span><br><span class="line">        <span class="comment">// 引用计数会+1.当shared_ptr离开作用域时，引用计数会-1</span></span><br><span class="line">        <span class="comment">// 当引用计数为0的时候，则delete内存</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// move 语法</span></span><br><span class="line">    <span class="keyword">auto</span> wAA = <span class="built_in">std</span>::make_shared&lt;<span class="keyword">int</span>&gt;(<span class="number">30</span>);</span><br><span class="line">    <span class="keyword">auto</span> wAA2 = <span class="built_in">std</span>::move(wAA); <span class="comment">// 此时wAA等于nullptr, wAA2.use_count()等于1</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; ((wAA.get() != <span class="literal">nullptr</span>)? (*wAA.get()):<span class="number">-1</span>) &lt;&lt; <span class="built_in">endl</span>; <span class="comment">//-1</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; ((wAA2.get() != <span class="literal">nullptr</span>)? (*wAA2.get()):<span class="number">-1</span>) &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//30</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; wAA.use_count() &lt;&lt; <span class="built_in">endl</span>; <span class="comment">//0 wA2.use_count() 引用计数</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; wAA2.use_count() &lt;&lt; <span class="built_in">endl</span>; <span class="comment">//1</span></span><br><span class="line">    <span class="comment">// 将wAA 对象move给wAA2，意味着wAA放弃了对内存的所有权和管理，此时wAA对象等于nullptr</span></span><br><span class="line">    <span class="comment">// 而wAA2获得了对象所有权，但因为此时wAA已不再持有对象，因此wAA2引用计数减1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line">----------------------------------------</span><br><span class="line"><span class="number">20</span></span><br><span class="line"><span class="number">20</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">-1</span></span><br><span class="line"><span class="number">30</span></span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="11-C-的引用"><a href="#11-C-的引用" class="headerlink" title="11. C++的引用"></a>11. C++的引用</h3><h4 id="1-引用"><a href="#1-引用" class="headerlink" title="1.引用"></a>1.引用</h4><p>引用： 是一种特殊的指针，不允许修改的指针。</p>
+<ul>
+<li><p>使用指针的坑：</p>
+<ul>
+<li>空指针</li>
+<li>野指针</li>
+<li>不知不觉改变了指针的值，却继续引用</li>
+</ul>
+</li>
+<li><p>引用：</p>
+<ul>
+<li>不存在空引用</li>
+<li>必须初始化</li>
+<li>一个引用永远指向它初始化的对象</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-基本使用"><a href="#2-基本使用" class="headerlink" title="2. 基本使用"></a>2. 基本使用</h4><p>引用：可以认为是指定变量的别名，使用是可以认为是变量本身。</p>
+<p><code>int x = 1;</code></p>
+<p><code>int &amp;rx = x;</code>这两句中&amp;是引用，注意与指针的区别</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;assert.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span> &amp;a, <span class="keyword">int</span> &amp;b)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> temp;</span><br><span class="line">    temp = a;</span><br><span class="line">    a = b;</span><br><span class="line">    b = temp;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">swap2</span><span class="params">(<span class="keyword">int</span> *a, <span class="keyword">int</span> *b)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> temp;</span><br><span class="line">    temp = *a;</span><br><span class="line">    *a = *b;</span><br><span class="line">    *b = temp;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> x = <span class="number">1</span>, x2 = <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">int</span> &amp;rx = x;</span><br><span class="line">    rx = <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; x &lt;&lt; <span class="built_in">endl</span>; <span class="comment">// 2</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; rx &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//2</span></span><br><span class="line">    rx = x2;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; x &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//3</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; rx &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//3</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">3</span>, b = <span class="number">4</span>;</span><br><span class="line">    swap(a, b);</span><br><span class="line">    assert(a==<span class="number">4</span>&amp;&amp;b==<span class="number">3</span>);</span><br><span class="line">    swap2(&amp;a, &amp;b);</span><br><span class="line">    assert(a==<span class="number">3</span>&amp;&amp;b==<span class="number">4</span>);</span><br><span class="line">    swap(rx, x);</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; x &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//3</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; rx &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//3</span></span><br><span class="line">    rx = x2 + <span class="number">1</span>;</span><br><span class="line">    swap(rx, x);</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; x &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//4</span></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; rx &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//4</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-C-的引用的作用"><a href="#3-C-的引用的作用" class="headerlink" title="3. C++的引用的作用"></a>3. C++的引用的作用</h4><ul>
+<li>有了指针为什么还要引用？——为了支持运算符重载；</li>
+<li>有了引用为什么还需要指针？——为了兼容c语言</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">miller</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2020/06/02/5.%20%E6%8C%87%E9%92%88/">http://example.com/2020/06/02/5.%20%E6%8C%87%E9%92%88/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">AIgonna</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/C/">C++</a><a class="post-meta__tags" href="/tags/%E6%8C%87%E9%92%88/">指针</a></div><div class="post_share"><div class="social-share" data-image="/img/imgs/9.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.png" target="_blank"><img class="post-qr-code-img" src="/img/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.png" target="_blank"><img class="post-qr-code-img" src="/img/alipay.png" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/06/05/2.ResNet%20%E7%BD%91%E7%BB%9C/"><img class="prev-cover" src="/img/imgs/12.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Resnet 网络</div></div></a></div><div class="next-post pull-right"><a href="/2020/06/02/1.VGG%20%E7%BD%91%E7%BB%9C/"><img class="next-cover" src="/img/imgs/13.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">VGG 网络</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%8C%87%E9%92%88"><span class="toc-number">1.</span> <span class="toc-text">5. 指针</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%8C%87%E9%92%88%E7%9A%84%E5%BC%95%E7%94%A8"><span class="toc-number">1.1.</span> <span class="toc-text">1. 指针的引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%B7%A6%E5%80%BC%E5%92%8C%E5%8F%B3%E5%80%BC"><span class="toc-number">1.2.</span> <span class="toc-text">2. 左值和右值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%8C%87%E9%92%88%E7%9A%84%E6%95%B0%E7%BB%84%E3%80%81%E6%95%B0%E7%BB%84%E7%9A%84%E6%8C%87%E9%92%88"><span class="toc-number">1.3.</span> <span class="toc-text">3. 指针的数组、数组的指针</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-const-pointer-%E4%B8%8E-pointer-to-const"><span class="toc-number">1.4.</span> <span class="toc-text">4. const pointer 与 pointer to const</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%8C%87%E9%92%88%E7%9A%84%E6%8C%87%E9%92%88"><span class="toc-number">1.5.</span> <span class="toc-text">5. 指针的指针</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-NULL"><span class="toc-number">1.6.</span> <span class="toc-text">6. NULL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9D%9C%E7%BB%9D%E2%80%9C-%E9%87%8E-%E2%80%9D%E6%8C%87%E9%92%88"><span class="toc-number">1.6.1.</span> <span class="toc-text">杜绝“ 野 ”指针</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%8C%87%E9%92%88%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="toc-number">1.7.</span> <span class="toc-text">7. 指针相关操作符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E4%B8%8E-%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="toc-number">1.8.</span> <span class="toc-text">8. ++ 与  - - 操作符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90"><span class="toc-number">1.9.</span> <span class="toc-text">9. 内存分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97"><span class="toc-number">1.9.1.</span> <span class="toc-text">1.栈和队列</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E6%96%B9%E6%A1%88%E2%80%94%E2%80%94RAII"><span class="toc-number">1.9.2.</span> <span class="toc-text">2. 资源管理方案——RAII</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-C-%E4%B8%AD%E6%A0%88%E5%92%8C%E5%A0%86%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">1.9.3.</span> <span class="toc-text">3. C++ 中栈和堆的对比</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="toc-number">1.9.4.</span> <span class="toc-text">4. 内存泄漏</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-C-%E7%9A%84%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88"><span class="toc-number">1.10.</span> <span class="toc-text">10. C++的智能指针</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-auto-ptr"><span class="toc-number">1.10.1.</span> <span class="toc-text">1. auto_ptr</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-unique-ptr"><span class="toc-number">1.10.2.</span> <span class="toc-text">2. unique_ptr</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-shared-ptr"><span class="toc-number">1.10.3.</span> <span class="toc-text">3. shared_ptr</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-weak-ptr"><span class="toc-number">1.10.4.</span> <span class="toc-text">4. weak_ptr</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-C-%E7%9A%84%E5%BC%95%E7%94%A8"><span class="toc-number">1.11.</span> <span class="toc-text">11. C++的引用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%BC%95%E7%94%A8"><span class="toc-number">1.11.1.</span> <span class="toc-text">1.引用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">1.11.2.</span> <span class="toc-text">2. 基本使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-C-%E7%9A%84%E5%BC%95%E7%94%A8%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.11.3.</span> <span class="toc-text">3. C++的引用的作用</span></a></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021&nbsp;<i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;"class="fas fa-heart"></i> By miller</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    loader: {
+      source: {
+        '[tex]/amsCd': '[tex]/amscd'
+      }
+    },
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        addClass: [200,() => {
+          document.querySelectorAll('mjx-container:not([display=\'true\']').forEach( node => {
+            const target = node.parentNode
+            if (!target.classList.contains('has-jax')) {
+              target.classList.add('mathjax-overflow')
+            }
+          })
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'forest',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: '5sVUTO1MTpgoo7pDynh6zYEM-MdYXbMMI',
+      appKey: 'vPUvOT1iP6YqcPPtYSqf8F7A',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign(initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script><h4>AIgonna</h4></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script></div></body></html>

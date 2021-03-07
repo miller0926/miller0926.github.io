@@ -1,0 +1,337 @@
+<!DOCTYPE html><html class="hide-aside" lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Efficient Estimation ofWord Representations in Vector Space——Mikolov论文笔记 | AIgonna</title><meta name="keywords" content="CBOW,Skip-gram"><meta name="author" content="miller"><meta name="copyright" content="miller"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="词向量空间中词表示的有效估计摘要提出了两种计算连续词向量表示模型。        特点：计算低，在语法和语义上的词相似度任务上精度有所提升 1. 简介以前模型的优点缺点：  统计翻译模型的缺陷:把单词当做原子单元，作为语料字典的索引失去了相似性。 N-gram优点能在任何数据集上训练。  简单模型在任务上的限制。如，语音识别：要求语音数据质量高，规模大，但不超过10亿级别的词汇量。因此简单技术改进">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Efficient Estimation ofWord Representations in Vector Space——Mikolov论文笔记">
+<meta property="og:url" content="http://example.com/2020/11/14/1.Mikolov%E8%AE%BA%E6%96%87Efficient%20Estimation%20ofWord%20Representations%20in%20Vector%20Space%20%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="AIgonna">
+<meta property="og:description" content="词向量空间中词表示的有效估计摘要提出了两种计算连续词向量表示模型。        特点：计算低，在语法和语义上的词相似度任务上精度有所提升 1. 简介以前模型的优点缺点：  统计翻译模型的缺陷:把单词当做原子单元，作为语料字典的索引失去了相似性。 N-gram优点能在任何数据集上训练。  简单模型在任务上的限制。如，语音识别：要求语音数据质量高，规模大，但不超过10亿级别的词汇量。因此简单技术改进">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/imgs/8.jpg">
+<meta property="article:published_time" content="2020-11-14T05:23:31.000Z">
+<meta property="article:modified_time" content="2021-03-06T14:26:57.871Z">
+<meta property="article:author" content="miller">
+<meta property="article:tag" content="CBOW">
+<meta property="article:tag" content="Skip-gram">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/imgs/8.jpg"><link rel="shortcut icon" href="/img/AI.png"><link rel="canonical" href="http://example.com/2020/11/14/1.Mikolov%E8%AE%BA%E6%96%87Efficient%20Estimation%20ofWord%20Representations%20in%20Vector%20Space%20%E7%AC%94%E8%AE%B0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-03-06 22:26:57'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 5.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/AI.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">34</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/imgs/8.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">AIgonna</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Efficient Estimation ofWord Representations in Vector Space——Mikolov论文笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2020-11-14T05:23:31.000Z" title="undefined 2020-11-14 13:23:31">2020-11-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NLP-paper/">NLP paper</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h3 id="词向量空间中词表示的有效估计"><a href="#词向量空间中词表示的有效估计" class="headerlink" title="词向量空间中词表示的有效估计"></a>词向量空间中词表示的有效估计</h3><h4 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h4><p>提出了两种计算连续词向量表示模型。<br>        特点：计算低，在语法和语义上的词相似度任务上精度有所提升</p>
+<h4 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h4><p>以前模型的优点缺点：</p>
+<ul>
+<li>统计翻译模型的缺陷:把单词当做原子单元，作为语料字典的索引失去了相似性。</li>
+<li>N-gram优点能在任何数据集上训练。</li>
+</ul>
+<p>简单模型在任务上的限制。如，语音识别：要求语音数据质量高，规模大，但不超过10亿级别的词汇量。因此简单技术改进不会有任何进步。</p>
+<p>随着机翻技术发展，现在能大规模数据上训练复杂模型。非常成功的概念是分布式词表示。例如，基于神经语言模型明显地优于N-gram模型</p>
+<h5 id="论文目标"><a href="#论文目标" class="headerlink" title="论文目标"></a>论文目标</h5><p>主要目标：从百万级词汇的大数据集中学习高质量的词向量。之前方法不能在百万级别词上学到词向量在50-100维之间。</p>
+<p>词从原空间映射到词向量子空间后，词与词之间不仅更近，而且有更多相似度。</p>
+<p>惊人的是，词表示的相似度超越了简单的语法规则。如:</p>
+<script type="math/tex; mode=display">
+\vec{\text{King}} - \vec{\text{Man}} + \vec{\text{Woman}} = \vec{\text{Queen}}</script><p>本文，试图通过开发新模型来最大化词向量操作的准确性，以保留词之间的线性规则。我们设计新的全面的测试集用于测量语法和语义规则，并且其展示了许多规则可以高准确率学到。此外，我们讨论训练时间和经典如何依赖词向量的维度和训练数据量。</p>
+<h5 id="之前的工作"><a href="#之前的工作" class="headerlink" title="之前的工作"></a>之前的工作</h5><p>词表示作为联系向量有很长的历史。流行的<strong>NNLM</strong>模型由Bengio提出，是前馈神经网络，有一个线性投影层和非线性隐藏层，用来学习词向量表示的联合分布和统计语言模型。</p>
+<p>另一个有趣的<strong>NNLM</strong>架构是词向量首先用单隐层的神经网络学习到。然后这个词向量被用来训练<strong>NNLM</strong>。这个词向量不是在构建整个<strong>NNLM</strong>中学到的。我们直接扩展了该架构，集中于第一步，用简单模型学到词向量。</p>
+<h3 id="2-模型架构"><a href="#2-模型架构" class="headerlink" title="2.模型架构"></a>2.模型架构</h3><p>以前估计连续词表示，用LSA(Latent Semantic Analysis)和LDA (Latent Dirichlet Allocation).本文用神经网络学习，在保留词之间的线性规则上，表现好于LSA；而LDA在大数据集上计算代价昂贵。</p>
+<p>为了比较不同模型架构，我们首先定义计算复杂度为充分训练模型所需要的参数的数量。接下来，最小化计算复杂度时最大化准确率。</p>
+<p>模型复杂度正比于：</p>
+<script type="math/tex; mode=display">
+O = E \times T \times Q \tag{1}</script><p>其中，E是训练轮数，T是训练集里词的数目，Q接下来会具体定义。通常，E是3-50轮，T可达到十亿数量级，所有模型都使用随机梯度下降和反向传播。</p>
+<h4 id="前馈神经网络-（NNLM）"><a href="#前馈神经网络-（NNLM）" class="headerlink" title="前馈神经网络 （NNLM）"></a>前馈神经网络 （NNLM）</h4><p>下图是<strong>NNLM</strong>，来源于 <a target="_blank" rel="noopener" href="https://www.jmlr.org/papers/volume3/bengio03a/bengio03a.pdf">A Neural Probabilistic Language Model</a></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210305150428.png" alt="image-20210305150250100" style="zoom:28%;" /></p>
+<p>包含输入层， 投影层， 隐藏层和输出层。在输入层， N个预测词之前的单词用1xV的one-hot编码，V是词汇表大小。输入层用共享的投影矩阵，然后被投影到NxD投影层 P,。因为在给定时间只有N个输入有效，构成投影层是相对廉价的操作。     </p>
+<p>NNLM架构在投影层和隐藏层的计算变得复杂， 因为投影层上的值是稠密的。通常选择N=10, 投影层P可能是500-2000，与此同时，隐藏层通常为500-1000.而且，隐藏通常用来计算字典中所有词概率分布， 这导致输出层是维度V。因此，每一个训练样本的计算复杂度为：(H是隐藏层节点个数)</p>
+<script type="math/tex; mode=display">
+Q = N \times D + N \times D \times H + H\times V \tag{2}</script><p>其中主要计算量来自于$H \times V$。然而，几个实际解决方案提出来避免计算量。比如石油分层版本的softmax，或者避免在训练中通过使用没有归一化的模型来避免完全归一模型。 用二叉树表示词汇表， 需要被估计的输出单元数目能降到$\text{log}_2(V)$。因此，主要计算复杂度源自于$N \times D \times H $项。</p>
+<p>在本文模型中，我们使用层次softmax， 词汇表表示成哈夫曼树。这延续之前的研究， 词频对于在神经网络语言模型中获取类别是有效的。哈夫曼树，分配给高频词端的二进制编码，这进一步减少了要估计的输出单元的数目：虽然平衡二叉树有$\text{log}_2(V) $的输出要估计， 但基于层次的softmax哈夫曼树只需要$\text{log}_2(\text{Unigram_perplexity}(V))$(V的一元困惑度)。 举例来说， 当词汇表是100万， 使用该结构估计时大约快两倍。但对于神经网络语言模型来说，计算瓶颈在$N \times D \times H $ 项， 我们后面将替代不含隐藏层， 严重取决于softmax归一化效率。</p>
+<h4 id="循环神经网络语言模型-（RNNLM）"><a href="#循环神经网络语言模型-（RNNLM）" class="headerlink" title="循环神经网络语言模型 （RNNLM）"></a>循环神经网络语言模型 （RNNLM）</h4><p>基于语言模型的循环神经网络， 提出来克服前馈神经语言模型的限制，比如需要具体的上下文长度(模型的顺序为N)， 因为理论上比起浅层神经网络， RNNs能更有效地表示更复杂的模式。RNN模型没有投影层，只有输入，隐藏层和输出层。 这类模型的特殊之处是连接自身隐藏层间的循环矩阵， 用来形成短期记忆，因为来自过去的信息可以有隐藏层状态表示， 隐藏层状态根据当前输入和上时间中的隐层状态来更新。</p>
+<p>循环神经网络训练每个样本是的复杂度为：</p>
+<script type="math/tex; mode=display">
+Q = H \times H + H \times V \tag{3}</script><p>其中，词表示D和隐藏层H有同样维度。这样通过使用层次softmax  $H \times V$ 有效地降为$H \times \text{log}_2(V)$。 复杂度主要来自于 $ H \times H$</p>
+<h4 id="平行训练神经网络"><a href="#平行训练神经网络" class="headerlink" title="平行训练神经网络"></a>平行训练神经网络</h4><p>为了在大数据集上训练模型，我们在大规模分布式框架之上实现了几个模型叫做DistBelief, 包括前馈神经语言模型和本文中提出的新模型。该框架允许我们并行地运行同一模型的多个副本，并且每个副本通过保留所有参数的中央服务器来同步更新其梯度。对应这种并行训练，我们使用称为Adagrad的自适应学习速率程序小批次异步梯度下降。在该框架下， 通常使用100或更多模型副本，每个腹部在数据中的不同机器上使用不同<strong>CPU</strong>内核。</p>
+<h3 id="3-新的对数线性模型"><a href="#3-新的对数线性模型" class="headerlink" title="3. 新的对数线性模型"></a>3. 新的对数线性模型</h3><p>在本节中， 我们提出两种新模型架构，用于学习分布式词表示， 并试图最小化计算复杂度。从前一节的主要研究中， 大部分复杂度源自于模型中非线性的隐藏层。虽然这是是的神经网络如此吸引人的地方， 我们觉得探索简单模型， 其可能无法像神经网络一样精确地表示数据，但可以在更多数据上有效地训练。</p>
+<p>新的架构直接遵循我们早期工作中提出的， 其发现神经语言模型可以分成两步成功训练 (1.2节): 首先， 连续词向量用简单模型学习，然后 <strong>N-gram NNLM</strong> 在这些分布式词表示上训练。算人后面大量的工作重点学习词向量，我们认为之前提出的是最简单的。注意，相关模型<strong>Hinton</strong>等人早就提出了。</p>
+<h4 id="连续词袋模型-Bag-of-Words"><a href="#连续词袋模型-Bag-of-Words" class="headerlink" title="连续词袋模型 (Bag-of-Words)"></a>连续词袋模型 (Bag-of-Words)</h4><p>首先提出价格类似于前馈<strong>NNLM</strong>， 其中非线性隐藏层被移除并且投影层为所有词所共享(不仅仅是投影矩阵)：隐藏， 所有词都被投影到相同位置(它们词向量被平均)。我们叫这种架构为词袋模型，因为在历史记录里词的顺序不影响投影。 此外，我们还使用前面的词；我们在下一节要介绍的，用四个前面的词和四个后面的词作为输入建立的一个对数线性分类器任务上得到最佳表现，其中，训练标准是正确分类当前(中间)词。训练复杂度为：</p>
+<script type="math/tex; mode=display">
+Q = N \times D + D \times \text{log}_2(V) \tag{4}</script><p>其中， N是输入数，D是输入one-hot维度， V是词汇表大小    </p>
+<p>我们把这个模型称为CBOW， 不同于标准词袋模型，它使用上下文的连续分布表示。如下图，注意输入层和投影层的权重矩阵，由所有词共现，跟NNLM一样。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210306103855.png" alt="image-20210306103847361" style="zoom:25%;" /></p>
+<h4 id="连续跳字模型-Continuous-Skip-gram-Model"><a href="#连续跳字模型-Continuous-Skip-gram-Model" class="headerlink" title="连续跳字模型 (Continuous Skip-gram Model)"></a>连续跳字模型 (Continuous Skip-gram Model)</h4><p>第二个类似于CBOW的架构，但不再基于上下文预测中心词，它试着优化一个基于同一个句子中的其他词的词分类器。更精确地说，我们用每一个当前词作为带连续投影层的输入， 然后预测当前词之前和之后一定范围内的词。我们发现增加范围能够梯度词向量的质量，但也增加了计算复杂度。因为距离当前词远的词不如距离它仅的词更相关，所以在我们的训练集中通过采用更少来给更远的词小的权重。</p>
+<p>该架构的训练复杂度正比于：</p>
+<script type="math/tex; mode=display">
+Q = C \times (D + D \times \text{log}_2(V) )\tag{5}</script><p>这里, C是词与词的最大距离。如果我们选择C=5, 对每个训练的词我们将随机选取一个在<1, C>的数字，然后用当前词的前R个词和后R个词作为当前词的正确标签。这需要我们对$R \times 2$个单词做分类， 当前词作为分类器的输入，当前词的前R个词和后R个词作为输出。在下面实验中，我们取C=10.</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210306121225.png" alt="image-20210306121224008" style="zoom:25%;" /></p>
+<h3 id="4-结果"><a href="#4-结果" class="headerlink" title="4.结果"></a>4.结果</h3><p>通过加大在词向量维度并在大数据集上训练后，相似词之间的词向量在空间上是相近的(文中 提出small相似词的问题，用$ \vec{X} = \vec{\text{biggest}} - \vec{\text{big}} + \vec{\text{small}} $ 找到smallest,然后用余弦相似度找到跟$\vec{X}$ 相近的词向量，就可以回答这个问题)</p>
+<p>词向量在5类语义和9类句法关系测试如下表：</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210306122126.png" alt="image-20210306122123397" style="zoom:25%;" /></p>
+<h4 id="任务描述"><a href="#任务描述" class="headerlink" title="任务描述"></a>任务描述</h4><p>为了衡量词向量的质量，作者定义了一个综合测试集，包含五种语义问题和九种句法问题。上图显示了每类中的两个示例。总的来说，有8869个语义问题和10675个句法问题。每个类别中的问题都是通过两个步骤创建的：首先，手动创建类似单词对的列表。然后，通过连接两个词对形成一个大的问题列表。例如，列出了68个美国大城市及其所属的州，并通过随机选择两个词对，形成了大约 2.5k 的问题。测试集中只包含单个标记词，因此不存在多词实体（such as New York）。</p>
+<p>评价模型结果好坏的标准就是上述的词向量线性运算，如果通过线性运算得到的单词与正确的单词是完全一致的，那么就代表该词向量是正确的。所以同义词很难被计算出来，因为没有对同义词的输入，所以模型不可能达到 100% 的准确率。但是该模型的准确率与某些任务是正相关的，所以还是有一些用处的。</p>
+<h4 id="最大化准确度"><a href="#最大化准确度" class="headerlink" title="最大化准确度"></a>最大化准确度</h4><p>使用谷歌新闻语料库训练词向量(6B tokens)， 限制词汇表大小为1百万。下表是CBOW在不同维度的词向量和不同数据量上测试结果。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210306125623.png" alt="image-20210306125620794" style="zoom:25%;" /></p>
+<p>可以看到到达某个点之后，增加词向量维度或增加数据量带来的提升很小。但流行的是在相对大的数据上训练词向量。增大数据量由公式4可知，增大2倍数据，差不多也增大2倍复杂度。</p>
+<p>训练每3轮以初始学习率为0.025线性下降的SGD反向传播，最后一轮为0.</p>
+<h4 id="模型架构比较"><a href="#模型架构比较" class="headerlink" title="模型架构比较"></a>模型架构比较</h4><p>传统模型的比较工作，使用相同的数据集，相同 640 维度的词向量，也不仅限使用 30k 的单词，并且使用了全部的测试集数据。以下是训练结果的比较：</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210306132631.png" alt="image-20210306132629622" style="zoom:30%;" /></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210306133007.png" alt="image-20210306132959540" style="zoom:25%;" /></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210306133119.png" alt="image-20210306133118236" style="zoom:25%;" /></p>
+<h3 id="5-学习到的关系示例"><a href="#5-学习到的关系示例" class="headerlink" title="5. 学习到的关系示例"></a>5. 学习到的关系示例</h3><p>表8中是遵循各种关系的词。通过前面定义的：两个词向量相减再将其加上另一个词向量，例如， Paris - France + Italy = Rome. </p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210306133318.png" alt="image-20210306133317569" style="zoom:25%;" /></p>
+<p>另外提高准确性的方法是提供多个关系的例子，然后将得到的关系向量平均，在本文测试中准确性提升了10%左右。</p>
+<h3 id="6-结论"><a href="#6-结论" class="headerlink" title="6. 结论"></a>6. 结论</h3><p>在本文中，在一系列的语法和语义的语言任务上不同模型的表现，研究了词表示向量的质量。我们观察到用简单模型架构而不是流行的神经网络模型（包括前馈和循环）是可能训练得到高质量的词向量。因为更低的计算复杂度，从大规模数据集上训练得到非常精确的高维词向量是可能得到的。使用<strong>DistBelief</strong> 分布式框架，它能在万亿级别的语料上训练<strong>CBOW</strong>和<strong>Skip-gram</strong>模型。这比比类似模型的先前最佳结果大几个数量级。</p>
+<p>词向量可以成功的应用于知识库中事实的自动扩展，还可以用于验证已有事实的准确性。从机翻实验结果来看也非常有前景。在未来，将我们的技术与潜在关系分析或其它进行比较也很有趣。我们想想我们的全面测试集将帮助研究社区提升估计词向量的现有技术。我们也期望高质量词向量将成为未来NLP应用的关键一环。</p>
+<h3 id="Inference"><a href="#Inference" class="headerlink" title="Inference"></a>Inference</h3><p>[1] <a target="_blank" rel="noopener" href="https://hiyoungai.com/posts/fcba888f.html">论文阅读《Efficient Estimation of Word Representations in Vector Space》</a></p>
+<p>[2] <a target="_blank" rel="noopener" href="http://littlehaes.com/2018/06/06/word2vec%E8%AE%BA%E6%96%87%E7%BF%BB%E8%AF%91-%E9%83%A8%E5%88%86/">word2vec论文翻译(部分)</a></p>
+<p>[3] <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/332572542">2.Embedding系列一(word2vec)</a></p>
+<p>[4] <a target="_blank" rel="noopener" href="https://spaces.ac.cn/archives/4299">不可思议的Word2Vec 1.数学原理</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">miller</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2020/11/14/1.Mikolov%E8%AE%BA%E6%96%87Efficient%20Estimation%20ofWord%20Representations%20in%20Vector%20Space%20%E7%AC%94%E8%AE%B0/">http://example.com/2020/11/14/1.Mikolov%E8%AE%BA%E6%96%87Efficient%20Estimation%20ofWord%20Representations%20in%20Vector%20Space%20%E7%AC%94%E8%AE%B0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">AIgonna</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CBOW/">CBOW</a><a class="post-meta__tags" href="/tags/Skip-gram/">Skip-gram</a></div><div class="post_share"><div class="social-share" data-image="/img/imgs/8.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.png" target="_blank"><img class="post-qr-code-img" src="/img/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.png" target="_blank"><img class="post-qr-code-img" src="/img/alipay.png" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/12/02/CS224N%20Lecture%201%20Introduction%20and%20Word%20Vectors/"><img class="prev-cover" src="/img/imgs/9.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CS224N Lecture 1 Introduction and Word Vectors</div></div></a></div><div class="next-post pull-right"><a href="/2020/11/01/4.%E7%B1%BB%E7%9A%84%E7%BB%A7%E6%89%BF/"><img class="next-cover" src="/img/imgs/6.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">4. 类的继承</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/12/02/CS224N Lecture 1 Introduction and Word Vectors/" title="CS224N Lecture 1 Introduction and Word Vectors"><img class="cover" src="/img/imgs/9.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-02</div><div class="title">CS224N Lecture 1 Introduction and Word Vectors</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%8D%E5%90%91%E9%87%8F%E7%A9%BA%E9%97%B4%E4%B8%AD%E8%AF%8D%E8%A1%A8%E7%A4%BA%E7%9A%84%E6%9C%89%E6%95%88%E4%BC%B0%E8%AE%A1"><span class="toc-number">1.</span> <span class="toc-text">词向量空间中词表示的有效估计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%91%98%E8%A6%81"><span class="toc-number">1.1.</span> <span class="toc-text">摘要</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.2.</span> <span class="toc-text">1. 简介</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%BA%E6%96%87%E7%9B%AE%E6%A0%87"><span class="toc-number">1.2.1.</span> <span class="toc-text">论文目标</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B9%8B%E5%89%8D%E7%9A%84%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.2.2.</span> <span class="toc-text">之前的工作</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">2.模型架构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%89%8D%E9%A6%88%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C-%EF%BC%88NNLM%EF%BC%89"><span class="toc-number">2.1.</span> <span class="toc-text">前馈神经网络 （NNLM）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B-%EF%BC%88RNNLM%EF%BC%89"><span class="toc-number">2.2.</span> <span class="toc-text">循环神经网络语言模型 （RNNLM）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B3%E8%A1%8C%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="toc-number">2.3.</span> <span class="toc-text">平行训练神经网络</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%96%B0%E7%9A%84%E5%AF%B9%E6%95%B0%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">3. 新的对数线性模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9E%E7%BB%AD%E8%AF%8D%E8%A2%8B%E6%A8%A1%E5%9E%8B-Bag-of-Words"><span class="toc-number">3.1.</span> <span class="toc-text">连续词袋模型 (Bag-of-Words)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9E%E7%BB%AD%E8%B7%B3%E5%AD%97%E6%A8%A1%E5%9E%8B-Continuous-Skip-gram-Model"><span class="toc-number">3.2.</span> <span class="toc-text">连续跳字模型 (Continuous Skip-gram Model)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%BB%93%E6%9E%9C"><span class="toc-number">4.</span> <span class="toc-text">4.结果</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E6%8F%8F%E8%BF%B0"><span class="toc-number">4.1.</span> <span class="toc-text">任务描述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E5%A4%A7%E5%8C%96%E5%87%86%E7%A1%AE%E5%BA%A6"><span class="toc-number">4.2.</span> <span class="toc-text">最大化准确度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84%E6%AF%94%E8%BE%83"><span class="toc-number">4.3.</span> <span class="toc-text">模型架构比较</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E5%AD%A6%E4%B9%A0%E5%88%B0%E7%9A%84%E5%85%B3%E7%B3%BB%E7%A4%BA%E4%BE%8B"><span class="toc-number">5.</span> <span class="toc-text">5. 学习到的关系示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E7%BB%93%E8%AE%BA"><span class="toc-number">6.</span> <span class="toc-text">6. 结论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Inference"><span class="toc-number">7.</span> <span class="toc-text">Inference</span></a></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021&nbsp;<i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;"class="fas fa-heart"></i> By miller</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    loader: {
+      source: {
+        '[tex]/amsCd': '[tex]/amscd'
+      }
+    },
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        addClass: [200,() => {
+          document.querySelectorAll('mjx-container:not([display=\'true\']').forEach( node => {
+            const target = node.parentNode
+            if (!target.classList.contains('has-jax')) {
+              target.classList.add('mathjax-overflow')
+            }
+          })
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'forest',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: '5sVUTO1MTpgoo7pDynh6zYEM-MdYXbMMI',
+      appKey: 'vPUvOT1iP6YqcPPtYSqf8F7A',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign(initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script><h4>AIgonna</h4></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script></div></body></html>

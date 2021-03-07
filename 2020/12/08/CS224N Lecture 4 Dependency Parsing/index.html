@@ -1,0 +1,744 @@
+<!DOCTYPE html><html class="hide-aside" lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CS224n Lecture 4 Dependency Parsing | AIgonna</title><meta name="keywords" content="CS224n,Dependency Parsing,CFG,Dependency Grammar,Dependency Structure,Greedy transition-based parsing,neural dependency parser,Graph-based dependency parser"><meta name="author" content="miller"><meta name="copyright" content="miller"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="1. Two views of linguistic structure两个语言结构观点： Constituency &#x3D; 句子结构 &#x3D; 无上下文语法 context-free grammars  (CFG) context-free grammars句子结构组织单词成嵌套成分   句子及各个组织单词成嵌套成分  能用CFG规则来表示语法 起步单元：单词被赋予一个类别 (part of speech">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS224n Lecture 4 Dependency Parsing">
+<meta property="og:url" content="http://example.com/2020/12/08/CS224N%20Lecture%204%20Dependency%20Parsing/index.html">
+<meta property="og:site_name" content="AIgonna">
+<meta property="og:description" content="1. Two views of linguistic structure两个语言结构观点： Constituency &#x3D; 句子结构 &#x3D; 无上下文语法 context-free grammars  (CFG) context-free grammars句子结构组织单词成嵌套成分   句子及各个组织单词成嵌套成分  能用CFG规则来表示语法 起步单元：单词被赋予一个类别 (part of speech">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/imgs/8.jpg">
+<meta property="article:published_time" content="2020-12-08T13:20:31.000Z">
+<meta property="article:modified_time" content="2021-02-25T08:49:33.997Z">
+<meta property="article:author" content="miller">
+<meta property="article:tag" content="CS224n">
+<meta property="article:tag" content="Dependency Parsing">
+<meta property="article:tag" content="CFG">
+<meta property="article:tag" content="Dependency Grammar">
+<meta property="article:tag" content="Dependency Structure">
+<meta property="article:tag" content="Greedy transition-based parsing">
+<meta property="article:tag" content="neural dependency parser">
+<meta property="article:tag" content="Graph-based dependency parser">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/imgs/8.jpg"><link rel="shortcut icon" href="/img/AI.png"><link rel="canonical" href="http://example.com/2020/12/08/CS224N%20Lecture%204%20Dependency%20Parsing/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-02-25 16:49:33'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 5.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/AI.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">34</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/imgs/8.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">AIgonna</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CS224n Lecture 4 Dependency Parsing</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2020-12-08T13:20:31.000Z" title="undefined 2020-12-08 21:20:31">2020-12-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NLP/">NLP</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">4.2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h3 id="1-Two-views-of-linguistic-structure"><a href="#1-Two-views-of-linguistic-structure" class="headerlink" title="1. Two views of linguistic structure"></a>1. Two views of linguistic structure</h3><p>两个语言结构观点： Constituency = 句子结构 = 无上下文语法 context-free grammars  (CFG)</p>
+<h4 id="context-free-grammars"><a href="#context-free-grammars" class="headerlink" title="context-free grammars"></a>context-free grammars</h4><p>句子结构组织单词成嵌套成分</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205140155.png" alt="image-20210205140122821" width="300" /></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205140737.png" alt="image-20210205140735369" width="300" /></p>
+<p>句子及各个组织单词成嵌套成分</p>
+<ul>
+<li>能用CFG规则来表示语法</li>
+<li>起步单元：单词被赋予一个类别 (part of speech = pos)</li>
+<li>单词可以组成不同类别的短语</li>
+<li>短语可以递归第组合成更大的短语</li>
+</ul>
+<p>其中，</p>
+<blockquote>
+<ul>
+<li><code>Det</code> 指的是 <strong>Determiner</strong>，在语言学中的含义为 <strong>限定词</strong></li>
+<li><code>NP</code> 指的是 <strong>Noun Phrase</strong> ，在语言学中的含义为 <strong>名词短语</strong></li>
+<li><code>VP</code> 指的是 <strong>Verb Phrase</strong> ，在语言学中的含义为 <strong>动词短语</strong></li>
+<li><code>P</code> 指的是 <strong>Preposition</strong> ，在语言学中的含义为 <strong>介词</strong><ul>
+<li><code>PP</code> 指的是 <strong>Prepositional Phrase</strong> ，在语言学中的含义为 <strong>介词短语</strong></li>
+</ul>
+</li>
+<li>NP→Det N</li>
+<li>NP→Det (Adj) N</li>
+<li>NP→Det (Adj) N PP<ul>
+<li>PP→P NP</li>
+</ul>
+</li>
+<li>VP→V P<ul>
+<li>中文中，介词短语会出现在动词之前</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h4 id="Dependency-Parsing"><a href="#Dependency-Parsing" class="headerlink" title="Dependency Parsing"></a>Dependency Parsing</h4><p>依存分析是一种在计算语言学中占主导地位的观点。</p>
+<ul>
+<li><p>依存结构表示哪些词依赖(修饰或其参数)哪些其他词。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205142022.png" alt="1560692691439" width="350" /></p>
+</li>
+<li><p>look是整个句子的root， 而look又依赖于crate。</p>
+</li>
+<li>in， the， large都是crate依赖</li>
+<li>in the kitchen都是crate的修饰</li>
+<li>in， the都是kitchen的依赖，同理分析by the door</li>
+</ul>
+<h4 id="为什么我们要句子结构"><a href="#为什么我们要句子结构" class="headerlink" title="为什么我们要句子结构?"></a>为什么我们要句子结构?</h4><ul>
+<li>我们需要理解句子结构，为了能正确解释语言。</li>
+<li>人类交流复杂想法通过将单词组合在一起合成更大的单元来传达复杂意思。</li>
+<li>我们需要知道什么联系什么</li>
+</ul>
+<h5 id="Prepositional-phrase-attachment-ambiguity"><a href="#Prepositional-phrase-attachment-ambiguity" class="headerlink" title="Prepositional phrase attachment ambiguity"></a>Prepositional phrase attachment ambiguity</h5><p>介词短语依存歧义</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205143110.png" alt="image-20210205143108203" width="350" /></p>
+<blockquote>
+<ul>
+<li>警察用刀杀了那个男子<ul>
+<li><code>cops</code> 是 <code>kill</code> 的 <code>subject</code> (subject 指 主语)</li>
+<li><code>man</code> 是 <code>kill</code>的 <code>object</code> (object 指 宾语)</li>
+<li><code>knife</code> 是 <code>kill</code> 的 <code>modifier</code> (modifier 指 修饰符)</li>
+</ul>
+</li>
+<li>警察杀了那个有刀的男子<ul>
+<li><code>knife</code> 是 <code>man</code> 的 <code>modifier</code> (名词修饰符，简称为 <code>nmod</code> )</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205143635.png" alt="1560696178556" width="350" /></p>
+<blockquote>
+<p><code>from space</code> 这一介词短语修饰的是前面的动词 <code>count</code> 还是名词 <code>whales</code> ？</p>
+</blockquote>
+<h5 id="PP-attachment-ambiguities-multiply"><a href="#PP-attachment-ambiguities-multiply" class="headerlink" title="PP attachment ambiguities multiply"></a>PP attachment ambiguities multiply</h5><ul>
+<li>关键分析决策是我们怎样”依存“不同成分<ul>
+<li>名词短语，形容词或分词、不定式和协调等。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205145329.png" alt="1560698493997" width="350" /></p>
+<blockquote>
+<ul>
+<li>上述句子中有四个介词短语</li>
+<li><code>board</code> 是 <code>approved</code> 的 主语，<code>acquisition</code> 是 <code>approved</code> 的谓语</li>
+<li><code>by Royal Trustco Ltd.</code> 是修饰 <code>acquisition</code> 的，即董事会批准了这家公司的收购</li>
+<li><code>of Toronto</code> 可以修饰 <code>approved, acquisition, Royal Trustco Ltd.</code> 之一，经过分析可以得知是修饰 <code>Royal Trustco Ltd.</code> 即表示这家公司的位置</li>
+<li><code>for $27 a share</code> 修饰 <code>acquisition</code></li>
+<li><code>at its monthly meeting</code> 修饰 <code>approved</code> ，即表示批准的时间地点</li>
+</ul>
+<p>面对这样复杂的句子结构，我们需要考虑 <strong>指数级</strong> 的可能结构，这个序列被称为 <strong>Catalan numbers</strong></p>
+<p><strong>Catalan numbers</strong> : $Cn=(2n)!/[(n+1)!n!]$</p>
+<ul>
+<li>一个指数增长的序列，出现在许多类似树的环境中<ul>
+<li>例如，一个 n+2 边的多边形可能的三角剖分的数量<ul>
+<li>出现在概率图形模型的三角剖分中(CS228)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h5 id="Coordination-scope-ambiguity"><a href="#Coordination-scope-ambiguity" class="headerlink" title="Coordination scope ambiguity"></a>Coordination scope ambiguity</h5><p>协调范围歧义</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205145740.png" alt="1560699777096" width="350" /></p>
+<ul>
+<li>一个人：[[Shuttle veteran and longtime NASA executive] Fred Gregory] appointed to board（航天飞机老兵、长期担任美国宇航局主管弗雷德-格雷戈里被任命为董事会成员）</li>
+<li>两个人：[Shuttle veteran] and [longtime NASA executive Fred Gregory] appointed to board（航天飞机老兵和长期担任美国宇航局主管弗雷德-格雷戈里被任命为董事会成员）</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205151917.png" alt="1560699972471" width="350" /></p>
+<p>Doctor: No heart, cognitive issues.</p>
+<h5 id="Adjectival-Modifier-Ambiguity"><a href="#Adjectival-Modifier-Ambiguity" class="headerlink" title="Adjectival Modifier Ambiguity"></a>Adjectival Modifier Ambiguity</h5><p>形容词修饰歧义</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205152236.png" alt="1560700236717" width="350" /></p>
+<blockquote>
+<p>例句：Students get first hand job experience</p>
+<p>  first hand</p>
+<p>   表示 第一手的，直接的，即学生获得了直接的工作经验</p>
+<p>first<code>是</code>hand的形容词修饰语</p>
+<ul>
+<li>first 修饰 experience, hand 修饰 job !</li>
+</ul>
+</blockquote>
+<h5 id="Verb-Phrase-VP-attachment-ambiguity"><a href="#Verb-Phrase-VP-attachment-ambiguity" class="headerlink" title="Verb Phrase (VP) attachment ambiguity"></a>Verb Phrase (VP) attachment ambiguity</h5><p>动词依存歧义</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205234617.png" alt="image-20210205234615845" width="350" /></p>
+<blockquote>
+<p>例句：Mutilated body washes up on Rio beach to be used for Olympic beach volleyball.</p>
+<ul>
+<li><code>to be used for Olympic beach volleyball</code> 是 动词短语 (VP)</li>
+<li>修饰的是 <code>body</code> 还是 <code>beach</code></li>
+</ul>
+</blockquote>
+<h5 id="Dependency-paths-identify-semantic-relations-–-e-g-for-protein-interaction"><a href="#Dependency-paths-identify-semantic-relations-–-e-g-for-protein-interaction" class="headerlink" title="Dependency paths identify semantic relations – e.g., for protein interaction"></a>Dependency paths identify semantic relations – e.g., for protein interaction</h5><p>依赖路径识别语义关系</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205152628.png" alt="image-20210205152626132" width="350" /></p>
+<h3 id="2-Dependency-Grammar-and-Dependency-Structure"><a href="#2-Dependency-Grammar-and-Dependency-Structure" class="headerlink" title="2. Dependency Grammar and Dependency Structure"></a>2. Dependency Grammar and Dependency Structure</h3><p>依存语法假定句法结构由词汇项之间的关系构成，通常是二元不对称关系(“箭头”)， 称为依赖关系。</p>
+<p>Dependency Structure有两种表现形式：</p>
+<ul>
+<li>一种是直接在句子上标出依存关系箭头及语法关系</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205153800.png" alt="image-20210205153758811" width="700" /></p>
+<ul>
+<li>另一种是将其做成树状机构（Dependency Tree Graph）</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205153908.png" alt="image-20210205153905754" width="500" /></p>
+<blockquote>
+<ul>
+<li>箭头通常标记(<strong>type</strong>)为语法关系的名称(主题、介词对象、apposition等)。</li>
+<li>依赖关系标签的系统，例如 <strong>universal dependency</strong> 通用依赖</li>
+<li>箭头连接头部( head )和一个依赖(修饰词,下级,下属)<ul>
+<li>A →依赖于 A 的事情</li>
+</ul>
+</li>
+<li>通常,依赖关系形成一棵树(单头 无环 连接图)</li>
+</ul>
+</blockquote>
+<h4 id="Dependency-Grammar-Parsing-History"><a href="#Dependency-Grammar-Parsing-History" class="headerlink" title="Dependency Grammar/Parsing History"></a>Dependency Grammar/Parsing History</h4><blockquote>
+<ul>
+<li>依赖结构的概念可以追溯到很久以前<ul>
+<li>Pāṇini的语法(公元前5世纪)</li>
+<li>一千年 阿拉伯语的语法的基本方法</li>
+</ul>
+</li>
+<li>选区/上下文无关文法是一个新奇的发明<ul>
+<li>20世纪发明(R.S.Wells,1947; then Chomsky)</li>
+</ul>
+</li>
+<li>现代依赖工作经常源于 L. Tesnière(1959)<ul>
+<li>是20世纪“东方”的主导方法(俄罗斯，中国，…)<ul>
+<li>有利于更自由的语序语言</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>NLP中最早类型的解析器在美国<ul>
+<li>David Hays 是美国计算语言学的创始人之一，他很早就(第一个)构建了依赖解析器(Hays 1962)。</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h4 id="Dependency-Grammar-and-Dependency-Structure-表示方法"><a href="#Dependency-Grammar-and-Dependency-Structure-表示方法" class="headerlink" title="Dependency Grammar and Dependency Structure  表示方法"></a>Dependency Grammar and Dependency Structure  表示方法</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205154340.png" alt="image-20210205154337913" width="600" /></p>
+<blockquote>
+<ul>
+<li>人们对箭头指向的方式不一致：有些人把箭头朝一个方向画；有人是反过来的<ul>
+<li>Tesnière 从头开始指向依赖，本课使用此种方式</li>
+</ul>
+</li>
+<li>通常添加一个伪造“ROOT”指向整个句子的头部，这样每个单词都精确地依赖于另一个节点</li>
+</ul>
+</blockquote>
+<p><strong>注：从头指向依赖，加上个ROOT</strong></p>
+<h4 id="The-rise-of-annotated-data-Universal-Dependencies-treebanks"><a href="#The-rise-of-annotated-data-Universal-Dependencies-treebanks" class="headerlink" title="The rise of annotated data: Universal Dependencies treebanks"></a>The rise of annotated data: Universal Dependencies treebanks</h4><p>标注数据的崛起：全局依存树库</p>
+<p><a target="_blank" rel="noopener" href="https://universaldependencies.org/">Universal Dependencies  </a></p>
+<blockquote>
+<p><strong>Universal Dependencies</strong>：我们想要拥有一个统一的、并行的依赖描述，可用于任何人类语言</p>
+<ul>
+<li>从前手工编写语法然后训练得到可以解析句子的解析器</li>
+<li>用一条规则捕捉很多东西真的很有效率，但是事实证明这在实践中不是一个好主意<ul>
+<li>语法规则符号越来越复杂，并且没有共享和重用人类所做的工作</li>
+</ul>
+</li>
+<li>句子结构上的treebanks 支持结构更有效</li>
+</ul>
+</blockquote>
+<h5 id="The-rise-of-annotated-data"><a href="#The-rise-of-annotated-data" class="headerlink" title="The rise of annotated data"></a>The rise of annotated data</h5><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205155456.png" alt="image-20210205155453514" width="600" /></p>
+<blockquote>
+<p>从一开始，构建 treebank 似乎比构建语法慢得多，也没有那么有用</p>
+<p>但是 treebank 给我们提供了许多东西</p>
+<ul>
+<li>劳动力的可重用性<ul>
+<li>许多解析器、词性标记器等可以构建在它之上</li>
+<li>语言学的宝贵资源</li>
+</ul>
+</li>
+<li>广泛的覆盖面，而不仅仅是一些直觉</li>
+<li>频率和分布信息</li>
+<li>一种评估系统的方法</li>
+</ul>
+</blockquote>
+<h5 id="Dependency-Conditioning-Preferences"><a href="#Dependency-Conditioning-Preferences" class="headerlink" title="Dependency Conditioning Preferences"></a>Dependency Conditioning Preferences</h5><p>依存条件偏好</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205160836.png" alt="image-20210205160831903" width="600" /></p>
+<p>关于依存分析的信息来源是什么？</p>
+<blockquote>
+<ol>
+<li>Bilexical affinities (两个单词间的密切关系)<ul>
+<li>[discussion →→ issues] 是看上去有道理的</li>
+</ul>
+</li>
+<li>Dependency distance 依赖距离<ul>
+<li>主要是与相邻词</li>
+</ul>
+</li>
+<li>Intervening material 介于中间的物质<ul>
+<li>依赖很少跨越介于中间的动词或标点符号</li>
+</ul>
+</li>
+<li>Valency of heads 头部的配价<ul>
+<li>对于头部，多少依赖在哪边是普遍的？</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<h5 id="Dependency-Parsing-1"><a href="#Dependency-Parsing-1" class="headerlink" title="Dependency Parsing"></a>Dependency Parsing</h5><p>依存分析</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205161742.png" alt="image-20210205161740991" width="600" /></p>
+<blockquote>
+<ul>
+<li>通过为每个单词选择它所依赖的其他单词(包括根)来解析一个句子</li>
+<li>通常有一些限制<ul>
+<li>只有一个单词是依赖于根的</li>
+<li>不存在循环 A→B, A→B,</li>
+</ul>
+</li>
+<li>这使得依赖项成为树</li>
+<li>最后一个问题是箭头是否可以交叉(非投影的 non-projective)<ul>
+<li>没有交叉的就是non-projectice</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h4 id="Projectivity"><a href="#Projectivity" class="headerlink" title="Projectivity"></a>Projectivity</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205162057.png" alt="image-20210205162056100" width="600" /></p>
+<blockquote>
+<ul>
+<li>定义：当单词按线性顺序排列时，没有交叉的依赖弧，所有的弧都在单词的上方</li>
+<li>与CFG树并行的依赖关系必须是投影的<ul>
+<li>通过将每个类别的一个子类别作为头来形成依赖关系</li>
+</ul>
+</li>
+<li>但是依赖理论通常允许非投射结构来解释移位的成分<ul>
+<li>如果没有这些非投射依赖关系，就不可能很容易获得某些结构的语义</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h4 id="Methods-of-Dependency-Parsing"><a href="#Methods-of-Dependency-Parsing" class="headerlink" title="Methods of Dependency Parsing"></a>Methods of Dependency Parsing</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205162900.png" alt="image-20210205162858011" width="600" /></p>
+<blockquote>
+<ol>
+<li>Dynamic programming<ul>
+<li>Eisner(1996)提出了一种复杂度为 $O(n3)$的精巧算法，它生成头部位于末尾而不是中间的解析项</li>
+</ul>
+</li>
+<li>Graph algorithms<ul>
+<li>为一个句子创建一个最小生成树</li>
+<li>McDonald et al.’s (2005) MSTParser 使用ML分类器独立地对依赖项进行评分(他使用MIRA进行在线学习，但它也可以是其他东西)</li>
+</ul>
+</li>
+<li>Constraint Satisfaction<ul>
+<li>去掉不满足硬约束的边 Karlsson(1990), etc.</li>
+</ul>
+</li>
+<li>“Transition-based parsing” or “deterministic dependency parsing“<ul>
+<li>良好的机器学习分类器 MaltParser(Nivreet al. 2008) 指导下的依存贪婪选择。已证明非常有效。</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<h3 id="3-Greedy-transition-based-parsing-Nivre-2003"><a href="#3-Greedy-transition-based-parsing-Nivre-2003" class="headerlink" title="3. Greedy transition-based parsing [Nivre 2003]"></a>3. Greedy transition-based parsing [Nivre 2003]</h3><p>基于贪婪转换解析</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205163516.png" alt="image-20210205163514787" width="600" /></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205172509.png" alt="image-20210205172505677" width="600" /></p>
+<p>这部分要求要有数据结构和算法基础。</p>
+<p>Transition-based Dependency Parsing 可以看做是state machine，对于一个序列$S = w_0w_1\cdots w_n$, $w_0$是fake [ROOT], state由3部分组成$(\sigma, \beta, A)$</p>
+<p>其中，</p>
+<ul>
+<li>$\sigma$是S中若干个$w_i$组成的stack</li>
+<li>$\beta$是S中若干个$w_i$组成的buffer，将其看作一个队列，队列模拟的是人眼的阅读顺序，人眼从左到右阅读，系统也从左往右读入单词，未读入的单词就构成一个队列，队列的出口在左边。初始状态下队列就是整个句子，且顺序不变。</li>
+<li>A是依存的arc构成的集合，如$A = {(w_i, r_1, w_j), \cdots, (w_p, r_k, w_q)}$,其中r是两个词之间的依存关系</li>
+</ul>
+<p>初始化状态的时候，</p>
+<ul>
+<li>$\sigma$只包含ROOT $w_o$, $\beta$包含所有单词$w_1, \cdots, w_n$, A是空集 $\empty$ .</li>
+</ul>
+<p>最终状态，</p>
+<ul>
+<li>$\sigma$包含ROOT和所有词，$\beta$清空，A包含所有依存arc，A就是我们需要的依存关系。</li>
+</ul>
+<p>状态转移有三种方式：</p>
+<ol>
+<li>SHFIT: 从buffer移除第一个词，并将其送入栈的顶部(前提：buffer为空)</li>
+<li>LEFT-ARC: 将 $(w_j,r,w_i)$ 加入边的集合 A ，其中 $w_i$是stack上的次顶层的词， $w_j$是stack上的最顶层的词；然后再将$w_i$从栈中移除。（前提条件：栈至少包含两个词，且$w_i$不能是ROOT）</li>
+<li>RIGHT_ARC：将$(w_i,r,w_j) $ 加入边的集合 A ，其中 $w_i$是stack上的次顶层的词， $w_j$是stack上的最顶层的词； 然后再将$w_j$从栈中移除。(前提条件：栈至少包含两个词)</li>
+</ol>
+<p>数学表示，（这样就可以理解整个过程就是上图意思）</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&\text{SHIFT} \qquad \sigma, w_i \vert \beta, A \quad \to \quad \sigma \vert  w_i,\beta, A \quad \text{意思:将buffer中第一个词}w_i\text{移除到栈的顶部}\\ \\
+
+&\text{LEFT-ARC}_r \qquad \sigma \vert w_i \vert w_j, \beta, A  \quad \to \quad \sigma \vert  w_j,\beta, A \cup \{r(w_j, w_i)\} \quad \\
+&\text{    意思:将}r(w_j, w_i)\text{加入A, 再将栈中次顶层的词}w_i\text{移除}\\\\
+
+&\text{RIGHT-ARC}_r \qquad \sigma \vert w_i \vert w_j, \beta, A  \quad \to \quad \sigma \vert  w_i,\beta, A \cup \{r(w_i, w_j)\} \quad \\
+&\text{    意思:将}r(w_i, w_j)\text{加入A, 再将栈中次顶层的词}w_j\text{移除}
+
+\end{aligned}</script><p>还可以看看这里面的详细例子 <a target="_blank" rel="noopener" href="https://blog.csdn.net/lairongxuan/article/details/104806128">举例说明</a></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205182327.png" alt="image-20210205182325696" width="600" /></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205182354.png" alt="image-20210205182352998" width="600" /></p>
+<h4 id="MaltParser-Nivreand-Hall-2005"><a href="#MaltParser-Nivreand-Hall-2005" class="headerlink" title="MaltParser [Nivreand Hall 2005]"></a><strong>MaltParser</strong> [Nivreand Hall 2005]</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205182748.png" alt="image-20210205182746397" width="600"  /></p>
+<blockquote>
+<ul>
+<li>我们需要解释如何选择下一步行动<ul>
+<li>Answer：标准回答，机器学习</li>
+</ul>
+</li>
+<li>每个动作都由一个有判别分类器(例如softmax classifier)对每个合法的动作进行预测<ul>
+<li>最多三种无类型的选择，当带有类型时，最多 |R|×2+1种</li>
+<li>Features：栈顶单词，POS；buffer中的第一个单词，POS；等等</li>
+</ul>
+</li>
+<li>（在最简单的形式中是）没有搜索的<ul>
+<li>但是，如果你愿意，你可以有效地执行一个 Beam search 束搜索(虽然速度较慢，但效果更好)：你可以在每个时间步骤中保留 k个好的解析前缀</li>
+</ul>
+</li>
+<li>模型精度是略低于最新的依存解析，但是</li>
+<li>它提供了非常快的线性时间解析，性能非常好</li>
+</ul>
+</blockquote>
+<h5 id="Conventional-Feature-Representation"><a href="#Conventional-Feature-Representation" class="headerlink" title="Conventional Feature Representation"></a>Conventional Feature Representation</h5><p>传统特征表示</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205183403.png" alt="image-20210205183359611" width="600"  /></p>
+<p>栈和队列中单词、词性、依存标签的组合的特征函数，一个超长的稀疏01向量。</p>
+<h5 id="Evaluation-of-Dependency-Parsing-labeled-dependency-accuracy"><a href="#Evaluation-of-Dependency-Parsing-labeled-dependency-accuracy" class="headerlink" title="Evaluation of Dependency Parsing: (labeled) dependency accuracy"></a>Evaluation of Dependency Parsing: (labeled) dependency accuracy</h5><p>依存解析的估计：标签的依存准确性</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205201004.png" alt="image-20210205201001703" width="600" /></p>
+<p>其中，<strong>UAS</strong> (unlabeled attachment score) 指 <strong>无标签依存正确率</strong> ，<strong>LAS</strong> (labeled attachment score) 指 <strong>有标签依存正确率</strong></p>
+<p>一个是LAS（labeled attachment score）即只有arc的箭头方向以及语法关系均正确时才算正确，以及UAS（unlabeled attachment score）即只要arc的箭头方向正确即可。</p>
+<p>例子中，</p>
+<ul>
+<li>只看箭头方向，即Gold和Parsed中数字相同有4个，4/5，即80%</li>
+<li>看箭头和解析后的标签只有2个，即2/5=40%</li>
+</ul>
+<h4 id="Handling-non-projectivity"><a href="#Handling-non-projectivity" class="headerlink" title="Handling non-projectivity"></a>Handling non-projectivity</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205202331.png" alt="image-20210205202329854" width="600"  /></p>
+<blockquote>
+<ul>
+<li>我们提出的弧标准算法只构建投影依赖树</li>
+<li>可能指向头的方向<ul>
+<li>在非投影弧上宣告失败</li>
+<li>只具有投影表示时使用依赖形式<ul>
+<li>CFG只允许投影结构；改进扰乱头</li>
+</ul>
+</li>
+<li>使用投影依赖项解析算法的后处理器来识别和解析非投影链接</li>
+<li>添加额外的转换，至少可以对大多数非投影结构建模（添加一个额外的交换转换，冒泡排序）</li>
+<li>转移到不使用或不需要对投射性进行任何约束的解析机制(例如，基于图的MSTParser)</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>​                </p>
+<h3 id="4-Why-train-a-neural-dependency-parser-Indicator-Features-Revisited"><a href="#4-Why-train-a-neural-dependency-parser-Indicator-Features-Revisited" class="headerlink" title="4. Why train a neural dependency parser? Indicator Features Revisited"></a>4. Why train a neural dependency parser? Indicator Features Revisited</h3><p>为什么训练神经依存解析？重提指示符特征</p>
+<p>传统特征表示稀疏、不完全、计算代价大（SVM之类的线性分类器本身是很快的，而传统parser的95%时间都花在拼装查询特征上了）。</p>
+<h4 id="A-neural-dependency-parser-Chen-and-Manning-2014"><a href="#A-neural-dependency-parser-Chen-and-Manning-2014" class="headerlink" title="A neural dependency parser [Chen and Manning 2014]"></a><strong>A neural dependency parser</strong> [Chen and Manning 2014]</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205203539.png" alt="image-20210205203537218" width="500"  /></p>
+<ul>
+<li>斯坦福依存英语解析<ul>
+<li>未便签依存分数UAS = head</li>
+<li>标签依存分数LAS = head and label</li>
+</ul>
+</li>
+</ul>
+<p>相较于传统的graph-based方法，花了这么多功夫得到的只是0.1%的LAS提升。</p>
+<h4 id="Distributed-Representations"><a href="#Distributed-Representations" class="headerlink" title="Distributed Representations"></a>Distributed Representations</h4><p>分布表示</p>
+<blockquote>
+<ul>
+<li>我们将每个单词表示为一个d维稠密向量（如词向量）<ul>
+<li>相似的单词应该有相近的向量</li>
+</ul>
+</li>
+<li>同时，part-of-speech tags词性标签(POS)和 dependency labels 依存标签也表示为d维向量<ul>
+<li>较小的离散集也表现出许多语义上的相似性。</li>
+</ul>
+</li>
+<li><strong>NNS</strong>(复数名词)应该接近<strong>NN</strong>(单数名词)</li>
+<li><strong>num</strong>(数值修饰语)应该接近<strong>amod</strong>(形容词修饰语)。</li>
+</ul>
+<p>对于Neural Dependency Parser，其输入特征通常包含三种</p>
+<ul>
+<li>stack和buffer中的单词及其dependent word</li>
+<li>单词的part-of-speech tag</li>
+<li>描述语法关系的arc label</li>
+</ul>
+</blockquote>
+<h4 id="Extracting-Tokens-and-then-vector-representations-from-configuration"><a href="#Extracting-Tokens-and-then-vector-representations-from-configuration" class="headerlink" title="Extracting Tokens and then vector representations from configuration"></a>Extracting Tokens and then vector representations from configuration</h4><p>提取令牌和从配置中获得向量表示</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205214125.png" alt="image-20210205214122911" width="500"  /></p>
+<p>将上图中的单词、词性标注和依存标签转换为词向量，并将它们联结起来。</p>
+<h4 id="Model-Architecture"><a href="#Model-Architecture" class="headerlink" title="Model Architecture"></a>Model Architecture</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205214241.png" alt="image-20210205214239995" width="500"  /></p>
+<p>具体来说，将嵌入矩阵 $E_w, E_t, E_l$中提取它们对应的稠密的特征的表示，然后将这些向量 <strong>拼接起来</strong> 作为输入 $[ x_w , x_t , x_l ] $。</p>
+<p>网络结构由一个输入层、一个隐含层Relu、一个softmax输出层组成，使用交叉熵损失函数。</p>
+<h4 id="Dependency-parsing-for-sentence-structure"><a href="#Dependency-parsing-for-sentence-structure" class="headerlink" title="Dependency parsing for sentence structure"></a>Dependency parsing for sentence structure</h4><p>神经网络能准确决定句子结构，增加解释性。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205215419.png" alt="image-20210205215417103" width="500"  /></p>
+<blockquote>
+<p>Chen and Manning (2014) was the first simple, successful neural dependency parser  </p>
+</blockquote>
+<p>然后稠密表示，让其在准确性和速度上优于其它贪婪解析器。</p>
+<h4 id="Further-developments-in-transition-based-neural-dependency-parsing"><a href="#Further-developments-in-transition-based-neural-dependency-parsing" class="headerlink" title="Further developments in transition-based neural dependency parsing"></a>Further developments in transition-based neural dependency parsing</h4><blockquote>
+<p>这项工作由其他人进一步开发和改进，特别是在谷歌</p>
+<ul>
+<li>更大、更深的网络中，具有更好调优的超参数</li>
+<li>Beam Search 更多的探索动作序列的可能性，而不是只考虑当前的最优</li>
+<li><p>全局、条件随机场(CRF)的推理出决策序列</p>
+<p><a target="_blank" rel="noopener" href="https://ai.googleblog.com/2016/05/announcing-syntaxnet-worlds-most.html">这就引出了SyntaxNet和Parsey McParseFace模型</a></p>
+</li>
+</ul>
+</blockquote>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205223105.png" alt="image-20210205223047925" width="500"  /></p>
+<h4 id="Graph-based-dependency-parsers"><a href="#Graph-based-dependency-parsers" class="headerlink" title="Graph-based dependency parsers"></a>Graph-based dependency parsers</h4><blockquote>
+<p>为每条边的每一个可能的依赖关系计算一个分数</p>
+<ul>
+<li>然后将每个单词的边缘添加到其得分最高的候选头部</li>
+<li>并对其它每个单词重复相同的操作</li>
+</ul>
+</blockquote>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205223325.png" alt="image-20210205223324167" width="500" /></p>
+<h4 id="A-Neural-graph-based-dependency-parser"><a href="#A-Neural-graph-based-dependency-parser" class="headerlink" title="A Neural graph-based dependency parser"></a>A Neural graph-based dependency parser</h4><p>[ Dozat and Manning 2017; Dozat, Qi, and Manning 2017 ]</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205223504.png" alt="image-20210205223503026" width="500"  /></p>
+<blockquote>
+<ul>
+<li>在神经模型中为基于图的依赖分析注入活力<ul>
+<li>为神经依赖分析设计一个双仿射评分模型<ul>
+<li>也使用神经序列模型，我们将在下周讨论</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>非常棒的结果<ul>
+<li>但是比简单的基于神经传递的解析器要慢<ul>
+<li>在一个长度为 n 的句子中可能有 $n^2$ 个依赖项</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>[1] <a target="_blank" rel="noopener" href="https://looperxx.github.io/CS224n-2019-05-Linguistic%20Structure%20Dependency%20Parsing/">05 Linguistic Structure Dependency Parsing</a></p>
+<p>[2] <a target="_blank" rel="noopener" href="https://blog.csdn.net/RHJlife/article/details/107132234">2019年CS224N课程笔记-Lecture 5: Linguistic Structure: Dependency Parsing</a></p>
+<p>[3] <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/66268929">CS224N笔记(五):Dependency Parsing</a></p>
+<p>[4] <a target="_blank" rel="noopener" href="https://blog.csdn.net/lairongxuan/article/details/104806128">CS224n 2019 Winter 笔记（三）：句子依存分析（Dependency Parsing）</a></p>
+<p>[5] <a target="_blank" rel="noopener" href="https://www.hankcs.com/nlp/parsing/neural-network-based-dependency-parser.html/2#h2-6">基于神经网络的高性能依存句法分析器</a></p>
+<p>[6] <a target="_blank" rel="noopener" href="http://fancyerii.github.io/books/depparser/">依存句法分析 部分代码及分析</a></p>
+<p>[7] <a target="_blank" rel="noopener" href="http://web.stanford.edu/class/cs224n/slides/cs224n-2021-lecture04-dep-parsing.pdf">cs224n-2021-lecture04-dep-parsing</a></p>
+<p>[8] <a target="_blank" rel="noopener" href="http://web.stanford.edu/class/cs224n/readings/cs224n-2019-notes04-dependencyparsing.pdf">cs224n-2019-notes04-dependencyparsing</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">miller</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2020/12/08/CS224N%20Lecture%204%20Dependency%20Parsing/">http://example.com/2020/12/08/CS224N%20Lecture%204%20Dependency%20Parsing/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">AIgonna</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CS224n/">CS224n</a><a class="post-meta__tags" href="/tags/Dependency-Parsing/">Dependency Parsing</a><a class="post-meta__tags" href="/tags/CFG/">CFG</a><a class="post-meta__tags" href="/tags/Dependency-Grammar/">Dependency Grammar</a><a class="post-meta__tags" href="/tags/Dependency-Structure/">Dependency Structure</a><a class="post-meta__tags" href="/tags/Greedy-transition-based-parsing/">Greedy transition-based parsing</a><a class="post-meta__tags" href="/tags/neural-dependency-parser/">neural dependency parser</a><a class="post-meta__tags" href="/tags/Graph-based-dependency-parser/">Graph-based dependency parser</a></div><div class="post_share"><div class="social-share" data-image="/img/imgs/8.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.png" target="_blank"><img class="post-qr-code-img" src="/img/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.png" target="_blank"><img class="post-qr-code-img" src="/img/alipay.png" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/12/10/CS224N%20Lecture%205%20Recurrent%20Neural%20Networks%20and%20Language%20Models/"><img class="prev-cover" src="/img/imgs/5.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CS224N Lecture 5 Recurrent Neural Networks and Language Models</div></div></a></div><div class="next-post pull-right"><a href="/2020/12/06/CS224N%20Lecture%203%20Backprop%20and%20Neural%20Networks/"><img class="next-cover" src="/img/imgs/14.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CS224N Lecture 3 Backprop and Neural Networks</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/12/14/CS224N Lecture 7 Machine Translation, Attention, Subword Models/" title="CS224N Lecture 7 Machine Translation, Attention, Subword Models"><img class="cover" src="/img/imgs/14.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-14</div><div class="title">CS224N Lecture 7 Machine Translation, Attention, Subword Models</div></div></a></div><div><a href="/2020/12/12/CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq/" title="CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq"><img class="cover" src="/img/imgs/14.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-12</div><div class="title">CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq</div></div></a></div><div><a href="/2020/12/10/CS224N Lecture 5 Recurrent Neural Networks and Language Models/" title="CS224N Lecture 5 Recurrent Neural Networks and Language Models"><img class="cover" src="/img/imgs/5.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-10</div><div class="title">CS224N Lecture 5 Recurrent Neural Networks and Language Models</div></div></a></div><div><a href="/2020/12/06/CS224N Lecture 3 Backprop and Neural Networks/" title="CS224N Lecture 3 Backprop and Neural Networks"><img class="cover" src="/img/imgs/14.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-06</div><div class="title">CS224N Lecture 3 Backprop and Neural Networks</div></div></a></div><div><a href="/2020/12/04/CS224N Lecture 2 Word Vectors 2 and Word Senses/" title="CS224n Lecture 2 Word Vectors,Word Senses, and Classifier Review"><img class="cover" src="/img/imgs/11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-04</div><div class="title">CS224n Lecture 2 Word Vectors,Word Senses, and Classifier Review</div></div></a></div><div><a href="/2020/12/02/CS224N Lecture 1 Introduction and Word Vectors/" title="CS224N Lecture 1 Introduction and Word Vectors"><img class="cover" src="/img/imgs/9.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-02</div><div class="title">CS224N Lecture 1 Introduction and Word Vectors</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Two-views-of-linguistic-structure"><span class="toc-number">1.</span> <span class="toc-text">1. Two views of linguistic structure</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#context-free-grammars"><span class="toc-number">1.1.</span> <span class="toc-text">context-free grammars</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Dependency-Parsing"><span class="toc-number">1.2.</span> <span class="toc-text">Dependency Parsing</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E4%BB%AC%E8%A6%81%E5%8F%A5%E5%AD%90%E7%BB%93%E6%9E%84"><span class="toc-number">1.3.</span> <span class="toc-text">为什么我们要句子结构?</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Prepositional-phrase-attachment-ambiguity"><span class="toc-number">1.3.1.</span> <span class="toc-text">Prepositional phrase attachment ambiguity</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#PP-attachment-ambiguities-multiply"><span class="toc-number">1.3.2.</span> <span class="toc-text">PP attachment ambiguities multiply</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Coordination-scope-ambiguity"><span class="toc-number">1.3.3.</span> <span class="toc-text">Coordination scope ambiguity</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Adjectival-Modifier-Ambiguity"><span class="toc-number">1.3.4.</span> <span class="toc-text">Adjectival Modifier Ambiguity</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Verb-Phrase-VP-attachment-ambiguity"><span class="toc-number">1.3.5.</span> <span class="toc-text">Verb Phrase (VP) attachment ambiguity</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Dependency-paths-identify-semantic-relations-%E2%80%93-e-g-for-protein-interaction"><span class="toc-number">1.3.6.</span> <span class="toc-text">Dependency paths identify semantic relations – e.g., for protein interaction</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Dependency-Grammar-and-Dependency-Structure"><span class="toc-number">2.</span> <span class="toc-text">2. Dependency Grammar and Dependency Structure</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Dependency-Grammar-Parsing-History"><span class="toc-number">2.1.</span> <span class="toc-text">Dependency Grammar&#x2F;Parsing History</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Dependency-Grammar-and-Dependency-Structure-%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">Dependency Grammar and Dependency Structure  表示方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#The-rise-of-annotated-data-Universal-Dependencies-treebanks"><span class="toc-number">2.3.</span> <span class="toc-text">The rise of annotated data: Universal Dependencies treebanks</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#The-rise-of-annotated-data"><span class="toc-number">2.3.1.</span> <span class="toc-text">The rise of annotated data</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Dependency-Conditioning-Preferences"><span class="toc-number">2.3.2.</span> <span class="toc-text">Dependency Conditioning Preferences</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Dependency-Parsing-1"><span class="toc-number">2.3.3.</span> <span class="toc-text">Dependency Parsing</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Projectivity"><span class="toc-number">2.4.</span> <span class="toc-text">Projectivity</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Methods-of-Dependency-Parsing"><span class="toc-number">2.5.</span> <span class="toc-text">Methods of Dependency Parsing</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Greedy-transition-based-parsing-Nivre-2003"><span class="toc-number">3.</span> <span class="toc-text">3. Greedy transition-based parsing [Nivre 2003]</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#MaltParser-Nivreand-Hall-2005"><span class="toc-number">3.1.</span> <span class="toc-text">MaltParser [Nivreand Hall 2005]</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Conventional-Feature-Representation"><span class="toc-number">3.1.1.</span> <span class="toc-text">Conventional Feature Representation</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Evaluation-of-Dependency-Parsing-labeled-dependency-accuracy"><span class="toc-number">3.1.2.</span> <span class="toc-text">Evaluation of Dependency Parsing: (labeled) dependency accuracy</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Handling-non-projectivity"><span class="toc-number">3.2.</span> <span class="toc-text">Handling non-projectivity</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Why-train-a-neural-dependency-parser-Indicator-Features-Revisited"><span class="toc-number">4.</span> <span class="toc-text">4. Why train a neural dependency parser? Indicator Features Revisited</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#A-neural-dependency-parser-Chen-and-Manning-2014"><span class="toc-number">4.1.</span> <span class="toc-text">A neural dependency parser [Chen and Manning 2014]</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Distributed-Representations"><span class="toc-number">4.2.</span> <span class="toc-text">Distributed Representations</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Extracting-Tokens-and-then-vector-representations-from-configuration"><span class="toc-number">4.3.</span> <span class="toc-text">Extracting Tokens and then vector representations from configuration</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Model-Architecture"><span class="toc-number">4.4.</span> <span class="toc-text">Model Architecture</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Dependency-parsing-for-sentence-structure"><span class="toc-number">4.5.</span> <span class="toc-text">Dependency parsing for sentence structure</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Further-developments-in-transition-based-neural-dependency-parsing"><span class="toc-number">4.6.</span> <span class="toc-text">Further developments in transition-based neural dependency parsing</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Graph-based-dependency-parsers"><span class="toc-number">4.7.</span> <span class="toc-text">Graph-based dependency parsers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#A-Neural-graph-based-dependency-parser"><span class="toc-number">4.8.</span> <span class="toc-text">A Neural graph-based dependency parser</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number"></span> <span class="toc-text">参考</span></a></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021&nbsp;<i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;"class="fas fa-heart"></i> By miller</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    loader: {
+      source: {
+        '[tex]/amsCd': '[tex]/amscd'
+      }
+    },
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        addClass: [200,() => {
+          document.querySelectorAll('mjx-container:not([display=\'true\']').forEach( node => {
+            const target = node.parentNode
+            if (!target.classList.contains('has-jax')) {
+              target.classList.add('mathjax-overflow')
+            }
+          })
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'forest',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: '5sVUTO1MTpgoo7pDynh6zYEM-MdYXbMMI',
+      appKey: 'vPUvOT1iP6YqcPPtYSqf8F7A',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign(initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script><h4>AIgonna</h4></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script></div></body></html>

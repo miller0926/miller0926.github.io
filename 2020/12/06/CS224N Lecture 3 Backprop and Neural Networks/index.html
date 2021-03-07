@@ -1,0 +1,473 @@
+<!DOCTYPE html><html class="hide-aside" lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CS224N Lecture 3 Backprop and Neural Networks | AIgonna</title><meta name="keywords" content="Backpropagation,CS224n,gradient,Automatic Differentiation"><meta name="author" content="miller"><meta name="copyright" content="miller"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="1. 梯度课程计划 Lecture 4： 手推梯度和算法  介绍 矩阵计算 反向传播     如果给定的函数有一个输出和n个输入 梯度是相对于每个输入的偏导向量  Jacobian Matrix: Generalization of the Gradient  给定一个m个输出和n个输入的函数 其Jacobian是偏导的$m \times n $矩阵  Chain rule Example Jac">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS224N Lecture 3 Backprop and Neural Networks">
+<meta property="og:url" content="http://example.com/2020/12/06/CS224N%20Lecture%203%20Backprop%20and%20Neural%20Networks/index.html">
+<meta property="og:site_name" content="AIgonna">
+<meta property="og:description" content="1. 梯度课程计划 Lecture 4： 手推梯度和算法  介绍 矩阵计算 反向传播     如果给定的函数有一个输出和n个输入 梯度是相对于每个输入的偏导向量  Jacobian Matrix: Generalization of the Gradient  给定一个m个输出和n个输入的函数 其Jacobian是偏导的$m \times n $矩阵  Chain rule Example Jac">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/imgs/14.jpg">
+<meta property="article:published_time" content="2020-12-06T13:20:31.000Z">
+<meta property="article:modified_time" content="2021-02-25T08:40:00.085Z">
+<meta property="article:author" content="miller">
+<meta property="article:tag" content="Backpropagation">
+<meta property="article:tag" content="CS224n">
+<meta property="article:tag" content="gradient">
+<meta property="article:tag" content="Automatic Differentiation">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/imgs/14.jpg"><link rel="shortcut icon" href="/img/AI.png"><link rel="canonical" href="http://example.com/2020/12/06/CS224N%20Lecture%203%20Backprop%20and%20Neural%20Networks/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-02-25 16:40:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 5.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/AI.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">34</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/imgs/14.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">AIgonna</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CS224N Lecture 3 Backprop and Neural Networks</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2020-12-06T13:20:31.000Z" title="undefined 2020-12-06 21:20:31">2020-12-06</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NLP/">NLP</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h3 id="1-梯度"><a href="#1-梯度" class="headerlink" title="1. 梯度"></a>1. 梯度</h3><p>课程计划</p>
+<p>Lecture 4： 手推梯度和算法</p>
+<ol>
+<li>介绍</li>
+<li>矩阵计算</li>
+<li>反向传播</li>
+</ol>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205231518.png" alt="image-20210205231516555" style="zoom:20%;" /></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205231834.png" alt="image-20210205231832287" style="zoom:20%;" /></p>
+<ul>
+<li>如果给定的函数有一个输出和n个输入</li>
+<li>梯度是相对于每个输入的偏导向量</li>
+</ul>
+<h4 id="Jacobian-Matrix-Generalization-of-the-Gradient"><a href="#Jacobian-Matrix-Generalization-of-the-Gradient" class="headerlink" title="Jacobian Matrix: Generalization of the Gradient"></a>Jacobian Matrix: Generalization of the Gradient</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210205235329.png" alt="image-20210205233107266" style="zoom:20%;" /></p>
+<ul>
+<li>给定一个m个输出和n个输入的函数</li>
+<li>其Jacobian是偏导的$m \times n $矩阵</li>
+</ul>
+<h4 id="Chain-rule"><a href="#Chain-rule" class="headerlink" title="Chain rule"></a>Chain rule</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206194530.png" alt="image-20210206194520526" width="300;" /></p>
+<h4 id="Example-Jacobian-Elementwise-activation-Function"><a href="#Example-Jacobian-Elementwise-activation-Function" class="headerlink" title="Example Jacobian: Elementwise activation Function"></a>Example Jacobian: Elementwise activation Function</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206194653.png" alt="image-20210206194651388" width="300;" /></p>
+<p>因为n个输入n个输出，其Jacobian矩阵应该是$n \times n$</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206194822.png" alt="image-20210206194820897" width="300;" /></p>
+<p>下面是一些公式，利用定义逐个元素求导很容易证明。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206200754.png" alt="image-20210206200713639" style="zoom:20%;"/></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206200752.png" alt="image-20210206200750535" style="zoom:20%;" /></p>
+<h3 id="2-Back-to-our-Neural-Net"><a href="#2-Back-to-our-Neural-Net" class="headerlink" title="2. Back to our Neural Net!"></a>2. Back to our Neural Net!</h3><p>模型如下，一个隐层的简单架构。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206201108.png" alt="image-20210206200922955" style="zoom:20%;" /></p>
+<p>让我们求分数s对b的梯度</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206201034.png" alt="image-20210206201032566" style="zoom:20%;"/></p>
+<h4 id="Break-up-equations-into-simple-pieces"><a href="#Break-up-equations-into-simple-pieces" class="headerlink" title="Break up equations into simple pieces"></a>Break up equations into simple pieces</h4><p>注意，变量和保持其维度!</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206201343.png" alt="image-20210206201342047" style="zoom:20%;" /></p>
+<h4 id="Apply-the-chain-rule"><a href="#Apply-the-chain-rule" class="headerlink" title="Apply the chain rule"></a>Apply the chain rule</h4><p>左边是关系式，右边是链式法则。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206201527.png" alt="image-20210206201519446" style="zoom:20%;"/></p>
+<p>利用方框里的公式，依次对其求导。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206201729.png" alt="image-20210206201726933" style="zoom:20%;"/></p>
+<h4 id="Write-out-the-Jacobians"><a href="#Write-out-the-Jacobians" class="headerlink" title="Write out the Jacobians"></a>Write out the Jacobians</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206201914.png" alt="image-20210206201912613" style="zoom:20%;"/></p>
+<h4 id="Re-using-Computation"><a href="#Re-using-Computation" class="headerlink" title="Re-using Computation"></a>Re-using Computation</h4><p>如果我们要求s对权重w的梯度呢？</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206202131.png" alt="image-20210206202128596" style="zoom:20%;" /></p>
+<p>$\delta$是其局部误差信号，跟上面对b的梯度一样, 推出$\mathbf{u}^T \circ f^{\prime}(z)$</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206202302.png" alt="image-20210206202259920" style="zoom:20%;"/></p>
+<h4 id="关于矩阵的导数：输出形状"><a href="#关于矩阵的导数：输出形状" class="headerlink" title="关于矩阵的导数：输出形状"></a>关于矩阵的导数：输出形状</h4><p>Derivative with respect to Matrix: Output shape , 分数s对权重的梯度形状是什么样的？</p>
+<ul>
+<li>1输出， nm的输入： $1 \times nm$的Jacobian。不方便接下来梯度更新</li>
+<li>让其变为$n \times m$</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206202843.png" alt="image-20210206202841356" style="zoom:20%;" /></p>
+<h4 id="矩阵的导数"><a href="#矩阵的导数" class="headerlink" title="矩阵的导数"></a>矩阵的导数</h4><p>分数s的梯度就等于局部误差  <code>x</code> 输入</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206203252.png" alt="image-20210206203250225" style="zoom:20%;"/></p>
+<h4 id="Deriving-local-input-gradient-in-backprop"><a href="#Deriving-local-input-gradient-in-backprop" class="headerlink" title="Deriving local input gradient in backprop"></a>Deriving local input gradient in backprop</h4><p>在反向传播中，推导局部输入的梯度。</p>
+<ul>
+<li>不妨只考虑单一权重$W_{ij}$</li>
+<li>$W_{ij}$只影响$z_i$</li>
+<li>例如，$W_{23}$只用于祭祀$z_2$而不是$z_1$</li>
+</ul>
+<p>隐层z对权重的梯度，就是每个输入。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206203528.png" alt="image-20210206203526059" style="zoom:20%;"/></p>
+<h4 id="为什么要转置"><a href="#为什么要转置" class="headerlink" title="为什么要转置?"></a>为什么要转置?</h4><p>简单说是为了计算时维度能用，本质是因为在求外积。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206204428.png" alt="image-20210206204421113" style="zoom:20%;"/></p>
+<h4 id="导数的形状应该是什么样的？"><a href="#导数的形状应该是什么样的？" class="headerlink" title="导数的形状应该是什么样的？"></a>导数的形状应该是什么样的？</h4><ul>
+<li>相似地，分数对偏置b的梯度是一个行向量<ul>
+<li>为了形状上的方便，称我们的梯度应该是一个列向量，因为b是一个列向量。</li>
+</ul>
+</li>
+<li>分歧在Jacobian形式和形状方便<ul>
+<li>要求作业遵循形状便利，Jacobian方便计算</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206204627.png" alt="image-20210206204625437" style="zoom:20%;"/></p>
+<p>两个建议：</p>
+<ol>
+<li>尽可能用Jacobian，最后reshape一下遵循形状方便<ul>
+<li>在最后，分数s对偏置的偏导是一个列向量，导致$\delta$要转置</li>
+</ul>
+</li>
+<li>总是遵循形状方便<ul>
+<li>检查维度，来弄清楚是否要转置或重组各个项</li>
+<li>错误信号$\delta$,到隐藏层要跟隐藏层维度一样</li>
+</ul>
+</li>
+</ol>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206205209.png" alt="image-20210206205207422" style="zoom:20%;" /></p>
+<h3 id="3-反向传播"><a href="#3-反向传播" class="headerlink" title="3. 反向传播"></a>3. 反向传播</h3><p>我们几乎给你展示了反向传播。本质就是链式法则的使用。</p>
+<p>技巧：</p>
+<p>我们在计算低层导数时利用对高层的的求导来减少计算量。<br><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206210238.png" alt="image-20210206210236414" style="zoom:20%;" /></p>
+<h4 id="Computation-Graphs-and-Backpropagation"><a href="#Computation-Graphs-and-Backpropagation" class="headerlink" title="Computation Graphs and Backpropagation"></a>Computation Graphs and Backpropagation</h4><p>软件工程中用图来表示神经网络式子：</p>
+<ul>
+<li>源节点：输入</li>
+<li>内部节点：操作</li>
+<li>边传递操作的结果</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206210806.png" alt="image-20210206210804087" style="zoom:20%;"/></p>
+<h4 id="Backpropagation"><a href="#Backpropagation" class="headerlink" title="Backpropagation"></a>Backpropagation</h4><p>在边上反向传递梯度</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206211220.png" alt="image-20210206211217584" style="zoom:20%;"/></p>
+<h4 id="单一节点的反向传播"><a href="#单一节点的反向传播" class="headerlink" title="单一节点的反向传播"></a>单一节点的反向传播</h4><ul>
+<li>每个节点接收一个“向上流的梯度”</li>
+<li>目标是传递正确的“向下流的梯度”</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206211520.png" alt="image-20210206211518562"  style="zoom:20%;" /></p>
+<p>每个节点有一个局部的梯度，这个梯度是其输出相对于其输入</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206212009.png" alt="image-20210206212007268" style="zoom:20%;"  /></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206212754.png" alt="image-20210206212751321" style="zoom:20%;"  /></p>
+<p>往下流的梯度 = 往上流的梯度 x 局部的梯度</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206212834.png" alt="image-20210206212832132" style="zoom:20%;" /></p>
+<p>多输入代表多个局部梯度</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206212954.png" alt="image-20210206212952166" style="zoom:20%;"  /></p>
+<p><strong>例子</strong></p>
+<p>函数f(x)的图表示如下，每个节点输入如图。</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206213634.png" alt="image-20210206213631261" style="zoom:20%;"  /></p>
+<p>对于第一个<code>加</code>节点，局部梯度: a对x， y分别为1， 1</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206213801.png" alt="image-20210206213756796" style="zoom:20%;"  /></p>
+<p>对于 <code>max</code>节点， 局部梯度： b对y, z分别为1， 0</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206214040.png" alt="image-20210206214007847" style="zoom:20%;"  /></p>
+<p>对于 <code>*</code>节点， 局部梯度：f对a， b分别为2， 3</p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206214221.png" alt="image-20210206214217247" style="zoom:20%;"  /></p>
+<p>最终反向梯度如下：</p>
+<ul>
+<li>局部梯度，可以理解为这个节点的梯度，算不清就让其变化0.1(比较小的值)，看对应输出变化多少，局部梯度就等于输出变化量/0.1。<ul>
+<li>加法，输入边都是1</li>
+<li>乘法，互换输入</li>
+<li>max，起作用的那一边是1，不起作用是0</li>
+</ul>
+</li>
+<li>边下面就是反向传播的梯度，整个下一层的反向梯度就是节点局部梯度 x 反向传播的梯度。</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206214941.png" alt="image-20210206214935426" style="zoom:20%;"  /></p>
+<h4 id="Gradients-sum-at-outward-branches"><a href="#Gradients-sum-at-outward-branches" class="headerlink" title="Gradients sum at outward branches"></a>Gradients sum at outward branches</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206222328.png" alt="image-20210206222325837" style="zoom:20%;"  /></p>
+<h4 id="Efficiency-compute-all-gradients-at-once"><a href="#Efficiency-compute-all-gradients-at-once" class="headerlink" title="Efficiency: compute all gradients at once"></a>Efficiency: compute all gradients at once</h4><p>计算反向传播，不正确的方式：</p>
+<ol>
+<li>一开始计算分数s对偏置b的梯度</li>
+<li>然后独立计算，分数s对权重的梯度</li>
+<li>这是重复计算</li>
+</ol>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206223518.png" alt="image-20210206223516711" style="zoom:20%;"  /></p>
+<p>正确方式：</p>
+<ul>
+<li>同时计算所有梯度</li>
+<li>当手工计算梯度是，像上面类似地用$\delta$</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206223654.png" alt="image-20210206223651956" style="zoom:20%;"  /></p>
+<h4 id="Back-Prop-in-General-Computation-Graph"><a href="#Back-Prop-in-General-Computation-Graph" class="headerlink" title="Back-Prop in General Computation Graph"></a>Back-Prop in General Computation Graph</h4><ol>
+<li><p>前向：按拓扑排序访问节点</p>
+<ul>
+<li>计算给定预处理节点的值</li>
+</ul>
+</li>
+<li><p>反向</p>
+<ul>
+<li>初始化 输出梯度 = 1</li>
+<li>逆序访问所有节点</li>
+<li>使用节点的后继的梯度来计算每个节点的梯度</li>
+</ul>
+<p>前向和反向复杂度都是big O()，通常，我们网络是固定层结构，所以我们使用矩阵和Jacobian。</p>
+</li>
+</ol>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206224159.png" alt="image-20210206224157886" style="zoom:20%;" /></p>
+<h4 id="Automatic-Differentiation"><a href="#Automatic-Differentiation" class="headerlink" title="Automatic Differentiation"></a>Automatic Differentiation</h4><p>自动微分：</p>
+<blockquote>
+<ul>
+<li>梯度计算可以从 Fprop 的符号表达式中自动推断</li>
+<li>每个节点类型需要知道如何计算其输出，以及如何在给定其输出的梯度后计算其输入的梯度</li>
+<li>现代DL框架(Tensorflow, Pytoch)反向传播，但主要是令作者手工计算层/节点的局部导数</li>
+</ul>
+</blockquote>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206225148.png" alt="image-20210206225146046" style="zoom:20%;" /></p>
+<h4 id="Backprop-Implementations"><a href="#Backprop-Implementations" class="headerlink" title="Backprop Implementations"></a>Backprop Implementations</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206230001.png" alt="image-20210206225958824" style="zoom:20%;" /></p>
+<h4 id="Implementation-forward-backward-API"><a href="#Implementation-forward-backward-API" class="headerlink" title="Implementation: forward/backward API"></a>Implementation: forward/backward API</h4><p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206230042.png" alt="image-20210206230040356" style="zoom:20%;"  /></p>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206230103.png" alt="image-20210206230101258" style="zoom:20%;"  /></p>
+<h4 id="Manual-Gradient-checking-Numeric-Gradient"><a href="#Manual-Gradient-checking-Numeric-Gradient" class="headerlink" title="Manual Gradient checking: Numeric Gradient"></a>Manual Gradient checking: Numeric Gradient</h4><ul>
+<li>h设置为非常小的数(1e-4)</li>
+<li>容易正确实现</li>
+<li>但接近非常慢</li>
+<li>检查你的作业实现很有用</li>
+</ul>
+<p><img src="https://gitee.com/miller999999/bpic/raw/master/img/blog/20210206230129.png" alt="image-20210206230127732" style="zoom:20%;"  /></p>
+<h4 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h4><blockquote>
+<ul>
+<li>我们已经掌握了神经网络的核心技术</li>
+<li>反向传播：沿计算图递归应用链式法则<ul>
+<li>[downstream gradient] = [upstream gradient] x [local gradient]</li>
+</ul>
+</li>
+<li>前向传递：计算操作结果并保存中间值</li>
+<li>反向传递：应用链式法则计算梯度</li>
+</ul>
+<p><strong>Why learn all these details about gradients?</strong></p>
+<ul>
+<li>现代深度学习框架为您计算梯度</li>
+<li>但是，当编译器或系统为您实现时，为什么要学习它们呢？<ul>
+<li>了解引擎下发生了什么是有用的</li>
+</ul>
+</li>
+<li>反向传播并不总是完美地工作<ul>
+<li>理解为什么对调试和改进模型至关重要</li>
+<li>参见<a target="_blank" rel="noopener" href="https://medium.com/@karpathy/yes-you-should-understandbackprop-    e2f06eab496b">Karpathy文章</a> （在教学大纲中）</li>
+</ul>
+</li>
+<li>未来课程的例子:爆炸和消失的梯度</li>
+</ul>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">miller</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2020/12/06/CS224N%20Lecture%203%20Backprop%20and%20Neural%20Networks/">http://example.com/2020/12/06/CS224N%20Lecture%203%20Backprop%20and%20Neural%20Networks/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">AIgonna</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Backpropagation/">Backpropagation</a><a class="post-meta__tags" href="/tags/CS224n/">CS224n</a><a class="post-meta__tags" href="/tags/gradient/">gradient</a><a class="post-meta__tags" href="/tags/Automatic-Differentiation/">Automatic Differentiation</a></div><div class="post_share"><div class="social-share" data-image="/img/imgs/14.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.png" target="_blank"><img class="post-qr-code-img" src="/img/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.png" target="_blank"><img class="post-qr-code-img" src="/img/alipay.png" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/12/08/CS224N%20Lecture%204%20Dependency%20Parsing/"><img class="prev-cover" src="/img/imgs/8.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CS224n Lecture 4 Dependency Parsing</div></div></a></div><div class="next-post pull-right"><a href="/2020/12/04/CS224N%20Lecture%202%20Word%20Vectors%202%20and%20Word%20Senses/"><img class="next-cover" src="/img/imgs/11.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">CS224n Lecture 2 Word Vectors,Word Senses, and Classifier Review</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/09/04/2. 台湾国立大学 反向传播算法/" title="Backpropagation 梯度推导 台湾国立大学应用深度学习"><img class="cover" src="/img/adl.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-04</div><div class="title">Backpropagation 梯度推导 台湾国立大学应用深度学习</div></div></a></div><div><a href="/2020/12/14/CS224N Lecture 7 Machine Translation, Attention, Subword Models/" title="CS224N Lecture 7 Machine Translation, Attention, Subword Models"><img class="cover" src="/img/imgs/14.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-14</div><div class="title">CS224N Lecture 7 Machine Translation, Attention, Subword Models</div></div></a></div><div><a href="/2020/12/12/CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq/" title="CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq"><img class="cover" src="/img/imgs/14.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-12</div><div class="title">CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq</div></div></a></div><div><a href="/2020/12/10/CS224N Lecture 5 Recurrent Neural Networks and Language Models/" title="CS224N Lecture 5 Recurrent Neural Networks and Language Models"><img class="cover" src="/img/imgs/5.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-10</div><div class="title">CS224N Lecture 5 Recurrent Neural Networks and Language Models</div></div></a></div><div><a href="/2020/12/08/CS224N Lecture 4 Dependency Parsing/" title="CS224n Lecture 4 Dependency Parsing"><img class="cover" src="/img/imgs/8.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-08</div><div class="title">CS224n Lecture 4 Dependency Parsing</div></div></a></div><div><a href="/2020/12/04/CS224N Lecture 2 Word Vectors 2 and Word Senses/" title="CS224n Lecture 2 Word Vectors,Word Senses, and Classifier Review"><img class="cover" src="/img/imgs/11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-12-04</div><div class="title">CS224n Lecture 2 Word Vectors,Word Senses, and Classifier Review</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A2%AF%E5%BA%A6"><span class="toc-number">1.</span> <span class="toc-text">1. 梯度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Jacobian-Matrix-Generalization-of-the-Gradient"><span class="toc-number">1.1.</span> <span class="toc-text">Jacobian Matrix: Generalization of the Gradient</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Chain-rule"><span class="toc-number">1.2.</span> <span class="toc-text">Chain rule</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Example-Jacobian-Elementwise-activation-Function"><span class="toc-number">1.3.</span> <span class="toc-text">Example Jacobian: Elementwise activation Function</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Back-to-our-Neural-Net"><span class="toc-number">2.</span> <span class="toc-text">2. Back to our Neural Net!</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Break-up-equations-into-simple-pieces"><span class="toc-number">2.1.</span> <span class="toc-text">Break up equations into simple pieces</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Apply-the-chain-rule"><span class="toc-number">2.2.</span> <span class="toc-text">Apply the chain rule</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Write-out-the-Jacobians"><span class="toc-number">2.3.</span> <span class="toc-text">Write out the Jacobians</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Re-using-Computation"><span class="toc-number">2.4.</span> <span class="toc-text">Re-using Computation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E7%9F%A9%E9%98%B5%E7%9A%84%E5%AF%BC%E6%95%B0%EF%BC%9A%E8%BE%93%E5%87%BA%E5%BD%A2%E7%8A%B6"><span class="toc-number">2.5.</span> <span class="toc-text">关于矩阵的导数：输出形状</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9F%A9%E9%98%B5%E7%9A%84%E5%AF%BC%E6%95%B0"><span class="toc-number">2.6.</span> <span class="toc-text">矩阵的导数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Deriving-local-input-gradient-in-backprop"><span class="toc-number">2.7.</span> <span class="toc-text">Deriving local input gradient in backprop</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%BD%AC%E7%BD%AE"><span class="toc-number">2.8.</span> <span class="toc-text">为什么要转置?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%BC%E6%95%B0%E7%9A%84%E5%BD%A2%E7%8A%B6%E5%BA%94%E8%AF%A5%E6%98%AF%E4%BB%80%E4%B9%88%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="toc-number">2.9.</span> <span class="toc-text">导数的形状应该是什么样的？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="toc-number">3.</span> <span class="toc-text">3. 反向传播</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Computation-Graphs-and-Backpropagation"><span class="toc-number">3.1.</span> <span class="toc-text">Computation Graphs and Backpropagation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Backpropagation"><span class="toc-number">3.2.</span> <span class="toc-text">Backpropagation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%95%E4%B8%80%E8%8A%82%E7%82%B9%E7%9A%84%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="toc-number">3.3.</span> <span class="toc-text">单一节点的反向传播</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Gradients-sum-at-outward-branches"><span class="toc-number">3.4.</span> <span class="toc-text">Gradients sum at outward branches</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Efficiency-compute-all-gradients-at-once"><span class="toc-number">3.5.</span> <span class="toc-text">Efficiency: compute all gradients at once</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Back-Prop-in-General-Computation-Graph"><span class="toc-number">3.6.</span> <span class="toc-text">Back-Prop in General Computation Graph</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Automatic-Differentiation"><span class="toc-number">3.7.</span> <span class="toc-text">Automatic Differentiation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Backprop-Implementations"><span class="toc-number">3.8.</span> <span class="toc-text">Backprop Implementations</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Implementation-forward-backward-API"><span class="toc-number">3.9.</span> <span class="toc-text">Implementation: forward&#x2F;backward API</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Manual-Gradient-checking-Numeric-Gradient"><span class="toc-number">3.10.</span> <span class="toc-text">Manual Gradient checking: Numeric Gradient</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Summary"><span class="toc-number">3.11.</span> <span class="toc-text">Summary</span></a></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021&nbsp;<i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;"class="fas fa-heart"></i> By miller</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    loader: {
+      source: {
+        '[tex]/amsCd': '[tex]/amscd'
+      }
+    },
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        addClass: [200,() => {
+          document.querySelectorAll('mjx-container:not([display=\'true\']').forEach( node => {
+            const target = node.parentNode
+            if (!target.classList.contains('has-jax')) {
+              target.classList.add('mathjax-overflow')
+            }
+          })
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'forest',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: '5sVUTO1MTpgoo7pDynh6zYEM-MdYXbMMI',
+      appKey: 'vPUvOT1iP6YqcPPtYSqf8F7A',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign(initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script><h4>AIgonna</h4></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script></div></body></html>

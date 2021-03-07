@@ -1,0 +1,385 @@
+<!DOCTYPE html><html class="hide-aside" lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AIgonna - AIgonna</title><meta name="author" content="miller"><meta name="copyright" content="miller"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="Python&#x2F;ML&#x2F;NLP&#x2F;CV">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AIgonna">
+<meta property="og:url" content="http://example.com/index.html">
+<meta property="og:site_name" content="AIgonna">
+<meta property="og:description" content="Python&#x2F;ML&#x2F;NLP&#x2F;CV">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/AI.png">
+<meta property="article:author" content="miller">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/AI.png"><link rel="shortcut icon" href="/img/AI.png"><link rel="canonical" href="http://example.com/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: false,
+  isHome: true,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2021-03-07 15:48:16'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 5.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/AI.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">34</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url(/img/ach.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">AIgonna</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">AIgonna</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/miller0926" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:tensortimes@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/12/14/CS224N%20Lecture%207%20Machine%20Translation,%20Attention,%20Subword%20Models/" title="CS224N Lecture 7 Machine Translation, Attention, Subword Models">     <img class="post_bg" src="/img/imgs/14.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="CS224N Lecture 7 Machine Translation, Attention, Subword Models"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/12/14/CS224N%20Lecture%207%20Machine%20Translation,%20Attention,%20Subword%20Models/" title="CS224N Lecture 7 Machine Translation, Attention, Subword Models">CS224N Lecture 7 Machine Translation, Attention, Subword Models</a><div class="article-meta-wrap"><span class="article-meta"><i class="fas fa-thumbtack article-meta__icon sticky"></i><span class="sticky">置顶</span><span class="article-meta__separator">|</span></span><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-12-14T15:23:31.000Z" title="发表于 2020-12-14 23:23:31">2020-12-14</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/NLP/">NLP</a></span></div><div class="content">Section 1: Machine Translation机翻是一个把句子x从一种语言(源语言)翻译到另一种语言(目标语言)的句子y的任务。
+
+1990s-2010s: Statistical Machine Translation
+核心思想：从数据中学习概率模型
+
+假设我们在翻译法语→英语
+
+我们希望给定法语句子x，找到最好的英语句子y
+
+\text{argmax }_y P(y \vert x) \tag{1}
+使用贝叶斯法则将其分解为两个部分分开学习：
+
+= \text{argmax }_y P(x \vert y) P(y)\tag{2}
+
+上图中，x：法语， y：英语， 机器翻译的目标就是寻找y，使得$P(y \vert x)$最大，这就是式1. 接下来，我们利用贝叶斯分解为两个概率的乘积：其中$P(y )$用之前介绍过得语言模型，从英语单语的数据中学习怎么写的通顺。最简单的就用n-gram方法。$P(y \vert x)$，是指由目标语言到源语言的翻译模型，其专注于翻译模型，翻译好局部的单词和短语，这个模型学习来自于平行的数据语料。
+
+Learning alignment ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/12/12/CS224N%20Lecture%206%20Vanishing%20Gradients,%20Fancy%20RNNs,%20Seq2Seq/" title="CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq">     <img class="post_bg" src="/img/imgs/14.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/12/12/CS224N%20Lecture%206%20Vanishing%20Gradients,%20Fancy%20RNNs,%20Seq2Seq/" title="CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq">CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq</a><div class="article-meta-wrap"><span class="article-meta"><i class="fas fa-thumbtack article-meta__icon sticky"></i><span class="sticky">置顶</span><span class="article-meta__separator">|</span></span><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-12-12T13:23:31.000Z" title="发表于 2020-12-12 21:23:31">2020-12-12</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/NLP/">NLP</a></span></div><div class="content">The Simple RNN Language Model
+简单的RNN语言模型。
+Training an RNN Language Model
+
+RNN在$t$时刻的输出是预测第$t+1$个词的概率分布$y^(t)$；而对于训练集中给定的文本来说，第$t+1$个词是已知的某个词，所以真实答案$y(t)$其实是一个one-hot向量，在第$x(t+1)$位置为1，其他位置为0。所以如果是交叉熵损失函数的话，表达式如上图中间的等式。RNN整体的损失就是所有时刻的损失均值。
+
+
+输入序列the students opened their 预测后面的词。
+
+训练RNN语言模型，其实loss是所有时刻t的损失的均值。
+
+
+
+然而：计算 整个语料库 的损失和梯度太昂贵了
+
+在实践中，输入序列实际上是一个 句子 或是 文档，这就跟随机梯度下降法中，随机抽小批样本一样。
+
+回忆 ：随机梯度下降允许我们计算小块数据的损失和梯度，并进行更新。
+计算一个句子的损失(实际上是一批句子)，计算梯度和更新权重。重复上述操作。
+
+
+Training the parameters of RNNs: Backprop ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/12/10/CS224N%20Lecture%205%20Recurrent%20Neural%20Networks%20and%20Language%20Models/" title="CS224N Lecture 5 Recurrent Neural Networks and Language Models">     <img class="post_bg" src="/img/imgs/5.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="CS224N Lecture 5 Recurrent Neural Networks and Language Models"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/12/10/CS224N%20Lecture%205%20Recurrent%20Neural%20Networks%20and%20Language%20Models/" title="CS224N Lecture 5 Recurrent Neural Networks and Language Models">CS224N Lecture 5 Recurrent Neural Networks and Language Models</a><div class="article-meta-wrap"><span class="article-meta"><i class="fas fa-thumbtack article-meta__icon sticky"></i><span class="sticky">置顶</span><span class="article-meta__separator">|</span></span><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-12-10T14:20:31.000Z" title="发表于 2020-12-10 22:20:31">2020-12-10</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/NLP/">NLP</a></span></div><div class="content">Languages modeling and RNNs
+
+语言模型是一个预测下一个词是什么的任务，
+
+the students opened their ________这个就是预测横线上填什么单词，(完型填空……)
+
+
+更正式地：给定一个单词序列$\boldsymbol{x}^{(1)}, \boldsymbol{x}^{(2)}, \cdots, \boldsymbol{x}^{(t)}$
+
+P(\boldsymbol{x}^{(t+1)} \vert \boldsymbol{x}^{(t)}, \cdots, \boldsymbol{(x)}^{(1)}  )
+
+其中，$\boldsymbol{x}^{(t+1)} $ 是词汇表中的任何一个词。
+
+这样做的系统就是语言模型
+
+
+
+你也可以认为语言模型是一个将概率分配给一段文本系统
+例如，如果我们有一些文本，那么该文本概率为，如上图。
+
+
+   
+
+
+
+
+上面应用中就是输入就会预测提示下一个词。
+n-gram Language Models
+n-gram 语言模型
+
+定义：n-gram是一段连续词
+
+unigrams: “the”, ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/12/08/CS224N%20Lecture%204%20Dependency%20Parsing/" title="CS224n Lecture 4 Dependency Parsing">     <img class="post_bg" src="/img/imgs/8.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="CS224n Lecture 4 Dependency Parsing"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/12/08/CS224N%20Lecture%204%20Dependency%20Parsing/" title="CS224n Lecture 4 Dependency Parsing">CS224n Lecture 4 Dependency Parsing</a><div class="article-meta-wrap"><span class="article-meta"><i class="fas fa-thumbtack article-meta__icon sticky"></i><span class="sticky">置顶</span><span class="article-meta__separator">|</span></span><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-12-08T13:20:31.000Z" title="发表于 2020-12-08 21:20:31">2020-12-08</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/NLP/">NLP</a></span></div><div class="content">1. Two views of linguistic structure两个语言结构观点： Constituency = 句子结构 = 无上下文语法 context-free grammars  (CFG)
+context-free grammars句子结构组织单词成嵌套成分
+
+
+句子及各个组织单词成嵌套成分
+
+能用CFG规则来表示语法
+起步单元：单词被赋予一个类别 (part of speech = pos)
+单词可以组成不同类别的短语
+短语可以递归第组合成更大的短语
+
+其中，
+
+
+Det 指的是 Determiner，在语言学中的含义为 限定词
+NP 指的是 Noun Phrase ，在语言学中的含义为 名词短语
+VP 指的是 Verb Phrase ，在语言学中的含义为 动词短语
+P 指的是 Preposition ，在语言学中的含义为 介词
+PP 指的是 Prepositional Phrase ，在语言学中的含义为 介词短语
+
+
+NP→Det N
+NP→Det (Adj) N
+NP→Det (Adj) N PP
+PP→P NP
+
+
+VP→V P
+中文中，介词短语会出现在动词之 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/12/06/CS224N%20Lecture%203%20Backprop%20and%20Neural%20Networks/" title="CS224N Lecture 3 Backprop and Neural Networks">     <img class="post_bg" src="/img/imgs/14.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="CS224N Lecture 3 Backprop and Neural Networks"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/12/06/CS224N%20Lecture%203%20Backprop%20and%20Neural%20Networks/" title="CS224N Lecture 3 Backprop and Neural Networks">CS224N Lecture 3 Backprop and Neural Networks</a><div class="article-meta-wrap"><span class="article-meta"><i class="fas fa-thumbtack article-meta__icon sticky"></i><span class="sticky">置顶</span><span class="article-meta__separator">|</span></span><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-12-06T13:20:31.000Z" title="发表于 2020-12-06 21:20:31">2020-12-06</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/NLP/">NLP</a></span></div><div class="content">1. 梯度课程计划
+Lecture 4： 手推梯度和算法
+
+介绍
+矩阵计算
+反向传播
+
+
+
+
+如果给定的函数有一个输出和n个输入
+梯度是相对于每个输入的偏导向量
+
+Jacobian Matrix: Generalization of the Gradient
+
+给定一个m个输出和n个输入的函数
+其Jacobian是偏导的$m \times n $矩阵
+
+Chain rule
+Example Jacobian: Elementwise activation Function
+因为n个输入n个输出，其Jacobian矩阵应该是$n \times n$
+
+下面是一些公式，利用定义逐个元素求导很容易证明。
+
+
+2. Back to our Neural Net!模型如下，一个隐层的简单架构。
+
+让我们求分数s对b的梯度
+
+Break up equations into simple pieces注意，变量和保持其维度!
+
+Apply the chain rule左边是关系式，右边是链式法则。
+
+利用方框里的公式，依次对其求导。
+
+Write out the Jacobians
+Re-using ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/12/04/CS224N%20Lecture%202%20Word%20Vectors%202%20and%20Word%20Senses/" title="CS224n Lecture 2 Word Vectors,Word Senses, and Classifier Review">     <img class="post_bg" src="/img/imgs/11.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="CS224n Lecture 2 Word Vectors,Word Senses, and Classifier Review"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/12/04/CS224N%20Lecture%202%20Word%20Vectors%202%20and%20Word%20Senses/" title="CS224n Lecture 2 Word Vectors,Word Senses, and Classifier Review">CS224n Lecture 2 Word Vectors,Word Senses, and Classifier Review</a><div class="article-meta-wrap"><span class="article-meta"><i class="fas fa-thumbtack article-meta__icon sticky"></i><span class="sticky">置顶</span><span class="article-meta__separator">|</span></span><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-12-04T12:20:31.000Z" title="发表于 2020-12-04 20:20:31">2020-12-04</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/NLP/">NLP</a></span></div><div class="content">1. Review: Main idea of word2vec如图，中心词预测上下文- Skip-Gram model 
+
+随机一个词向量开始
+在整个语料库上迭代每个词
+试着用中心词预测周围词，如下图
+
+
+
+
+
+更新向量
+
+该算法学习词向量， 在词向量空间上，获得相似性和有意义的方向。U和V是长度为N的向量，需要学习得到。
+
+Word2vec parameters and computations
+注意：
+
+在每个方向上都是一样的预测
+期望模型对所有出现在上下文（相当频繁）的词给一个合理的高概率值估计
+
+Word2vec maximizes objective function by putting similar words nearby in space
+2. Optimization: Gradient Descent
+Gradient Descent
+更新公式（矩阵形式）
+
+\theta^{new}= \theta^{old} - \alpha \nabla_{\theta} J(\theta) \tag{1}其中\alpha是步进或学习率
+
+更新公式 （单一参数）
+
+
+
+\ ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/12/02/CS224N%20Lecture%201%20Introduction%20and%20Word%20Vectors/" title="CS224N Lecture 1 Introduction and Word Vectors">     <img class="post_bg" src="/img/imgs/9.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="CS224N Lecture 1 Introduction and Word Vectors"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/12/02/CS224N%20Lecture%201%20Introduction%20and%20Word%20Vectors/" title="CS224N Lecture 1 Introduction and Word Vectors">CS224N Lecture 1 Introduction and Word Vectors</a><div class="article-meta-wrap"><span class="article-meta"><i class="fas fa-thumbtack article-meta__icon sticky"></i><span class="sticky">置顶</span><span class="article-meta__separator">|</span></span><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-12-02T13:17:20.000Z" title="发表于 2020-12-02 21:17:20">2020-12-02</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/NLP/">NLP</a></span></div><div class="content">Word meaningRepresenting words as discrete symbols在传统NLP中， 我们将word视为离散的符号。特别是one-hot encoding， 如：
+
+model = [0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 1 \ 0 \ 0 \ 0 \ 0]\\
+hotel = [0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 1 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0 \ 0] \tag{1}其中， 向量维度= 词汇表单词数量(e.g, 500,000)
+Problem with words as discrete symbols
+式2两个向量正交
+对于one-hot 向量没有相似性的自然理解。
+
+Solution:
+替代：学习把相似性编码到向量里。
+Representing words by their context
+语义分布：单词的意思有其频繁出现的近邻词来给定
+当一个单词w出现在文本中，其上下文是出现在附近的一系列单词（ 在一个固定的窗口内）
+用许多w的文本向量来构建一个w的表示矩阵
+
+ ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/11/14/1.Mikolov%E8%AE%BA%E6%96%87Efficient%20Estimation%20ofWord%20Representations%20in%20Vector%20Space%20%E7%AC%94%E8%AE%B0/" title="Efficient Estimation ofWord Representations in Vector Space——Mikolov论文笔记">     <img class="post_bg" src="/img/imgs/8.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="Efficient Estimation ofWord Representations in Vector Space——Mikolov论文笔记"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/11/14/1.Mikolov%E8%AE%BA%E6%96%87Efficient%20Estimation%20ofWord%20Representations%20in%20Vector%20Space%20%E7%AC%94%E8%AE%B0/" title="Efficient Estimation ofWord Representations in Vector Space——Mikolov论文笔记">Efficient Estimation ofWord Representations in Vector Space——Mikolov论文笔记</a><div class="article-meta-wrap"><span class="article-meta"><i class="fas fa-thumbtack article-meta__icon sticky"></i><span class="sticky">置顶</span><span class="article-meta__separator">|</span></span><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-11-14T05:23:31.000Z" title="发表于 2020-11-14 13:23:31">2020-11-14</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/NLP-paper/">NLP paper</a></span></div><div class="content">词向量空间中词表示的有效估计摘要提出了两种计算连续词向量表示模型。        特点：计算低，在语法和语义上的词相似度任务上精度有所提升
+1. 简介以前模型的优点缺点：
+
+统计翻译模型的缺陷:把单词当做原子单元，作为语料字典的索引失去了相似性。
+N-gram优点能在任何数据集上训练。
+
+简单模型在任务上的限制。如，语音识别：要求语音数据质量高，规模大，但不超过10亿级别的词汇量。因此简单技术改进不会有任何进步。
+随着机翻技术发展，现在能大规模数据上训练复杂模型。非常成功的概念是分布式词表示。例如，基于神经语言模型明显地优于N-gram模型
+论文目标主要目标：从百万级词汇的大数据集中学习高质量的词向量。之前方法不能在百万级别词上学到词向量在50-100维之间。
+词从原空间映射到词向量子空间后，词与词之间不仅更近，而且有更多相似度。
+惊人的是，词表示的相似度超越了简单的语法规则。如:
+
+\vec{\text{King}} - \vec{\text{Man}} + \vec{\text{Woman}} = \vec{\text{Queen}}本文，试图通过开发新模型来最大化词向量操作的准确 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2021/01/28/hexo+butterfly/" title="hexo + butterfly blog安装">     <img class="post_bg" src="/img/imgs/6.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="hexo + butterfly blog安装"></a></div><div class="recent-post-info"><a class="article-title" href="/2021/01/28/hexo+butterfly/" title="hexo + butterfly blog安装">hexo + butterfly blog安装</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-01-28T11:49:39.000Z" title="发表于 2021-01-28 19:49:39">2021-01-28</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a></span></div><div class="content">hexo + Butterfly blog安装1. 安装hexo butterfly1. 安装hexo12npm install -g hexo-clihexo init
+2. 安装butterfly12git clone -b master https://github.com/jerryc127/hexo-theme-butterfly.git themes/Butterfly
+将hexo根目录下_config.yml改为theme: Butterfly。
+平滑升级
+推荐把主题默认的配置文件_config.yml 复製到 Hexo 根目录下的 `_config.butterfly.yml’
+Hexo會自動合併主題中的_config.yml和 _config.butterfly.yml裡的配置，如果存在同名配置，會使用_config.butterfly.yml的配置，其優先度較高。
+
+安装安装 pug 以及 stylus 的渲染器插件。
+1npm install hexo-renderer-pug hexo-renderer-stylus --save
+proxy123sudo np ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/12/14/hexo+matrey%20blog%E6%90%AD%E5%BB%BA/" title="1. Hexo + Matery blog 搭建">     <img class="post_bg" src="/img/imgs/7.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="1. Hexo + Matery blog 搭建"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/12/14/hexo+matrey%20blog%E6%90%AD%E5%BB%BA/" title="1. Hexo + Matery blog 搭建">1. Hexo + Matery blog 搭建</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-12-14T05:49:39.000Z" title="发表于 2020-12-14 13:49:39">2020-12-14</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a></span></div><div class="content">1. Hexo + Matery blog 搭建1. 卸载以前安装 hexo1. 卸载 hexo 及 重新安装记得备份以前文档
+12345678910111213141516sudo npm uninstall -g hexo-cli#apt-get 卸载sudo apt-get remove --purge npmsudo apt-get remove --purge nodejssudo apt-get remove --purge nodejs-legacysudo apt-get autoremove#手动删除 npm 相关目录sudo rm -r /usr/local/bin/npmsudo rm -r /usr/local/lib/node-moudelssudo find / -name npmsudo rm -rf /usr/local/lib/*sudo rm -r /tmp/npm* 
+2. 重新安装nodejs/ npm/ hexo123456789101112131415161718#重新安装nodejssudo curl -sL https://deb.nod ...</div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/AI.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">miller</div><div class="author-info__description">Python/ML/NLP/CV</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">34</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/miller0926"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/miller0926" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:tensortimes@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">终不似，少年游！</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/01/28/hexo+butterfly/" title="hexo + butterfly blog安装"><img src="/img/imgs/6.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="hexo + butterfly blog安装"/></a><div class="content"><a class="title" href="/2021/01/28/hexo+butterfly/" title="hexo + butterfly blog安装">hexo + butterfly blog安装</a><time datetime="2021-01-28T11:49:39.000Z" title="发表于 2021-01-28 19:49:39">2021-01-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/14/CS224N%20Lecture%207%20Machine%20Translation,%20Attention,%20Subword%20Models/" title="CS224N Lecture 7 Machine Translation, Attention, Subword Models"><img src="/img/imgs/14.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="CS224N Lecture 7 Machine Translation, Attention, Subword Models"/></a><div class="content"><a class="title" href="/2020/12/14/CS224N%20Lecture%207%20Machine%20Translation,%20Attention,%20Subword%20Models/" title="CS224N Lecture 7 Machine Translation, Attention, Subword Models">CS224N Lecture 7 Machine Translation, Attention, Subword Models</a><time datetime="2020-12-14T15:23:31.000Z" title="发表于 2020-12-14 23:23:31">2020-12-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/14/hexo+matrey%20blog%E6%90%AD%E5%BB%BA/" title="1. Hexo + Matery blog 搭建"><img src="/img/imgs/7.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="1. Hexo + Matery blog 搭建"/></a><div class="content"><a class="title" href="/2020/12/14/hexo+matrey%20blog%E6%90%AD%E5%BB%BA/" title="1. Hexo + Matery blog 搭建">1. Hexo + Matery blog 搭建</a><time datetime="2020-12-14T05:49:39.000Z" title="发表于 2020-12-14 13:49:39">2020-12-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/12/CS224N%20Lecture%206%20Vanishing%20Gradients,%20Fancy%20RNNs,%20Seq2Seq/" title="CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq"><img src="/img/imgs/14.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq"/></a><div class="content"><a class="title" href="/2020/12/12/CS224N%20Lecture%206%20Vanishing%20Gradients,%20Fancy%20RNNs,%20Seq2Seq/" title="CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq">CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq</a><time datetime="2020-12-12T13:23:31.000Z" title="发表于 2020-12-12 21:23:31">2020-12-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/10/CS224N%20Lecture%205%20Recurrent%20Neural%20Networks%20and%20Language%20Models/" title="CS224N Lecture 5 Recurrent Neural Networks and Language Models"><img src="/img/imgs/5.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="CS224N Lecture 5 Recurrent Neural Networks and Language Models"/></a><div class="content"><a class="title" href="/2020/12/10/CS224N%20Lecture%205%20Recurrent%20Neural%20Networks%20and%20Language%20Models/" title="CS224N Lecture 5 Recurrent Neural Networks and Language Models">CS224N Lecture 5 Recurrent Neural Networks and Language Models</a><time datetime="2020-12-10T14:20:31.000Z" title="发表于 2020-12-10 22:20:31">2020-12-10</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline"><i class="fas fa-folder-open"></i><span>分类</span></div><ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/2020-Spring-NTU-ADL/"><span class="card-category-list-name">2020 Spring NTU ADL</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/CMSC35300-Mathematics-Foundations-of-ML/"><span class="card-category-list-name">CMSC35300 Mathematics Foundations of ML</span><span class="card-category-list-count">11</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/CV/"><span class="card-category-list-name">CV</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Cpp/"><span class="card-category-list-name">Cpp</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Data-Structure-and-Algorithm/"><span class="card-category-list-name">Data Structure and Algorithm</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Mathematic-for-machine-learning-%E7%AC%94%E8%AE%B0/"><span class="card-category-list-name">Mathematic for machine learning 笔记</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/NLP/"><span class="card-category-list-name">NLP</span><span class="card-category-list-count">7</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/NLP-paper/"><span class="card-category-list-name">NLP paper</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Python%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/"><span class="card-category-list-name">Python面向对象</span><span class="card-category-list-count">4</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%89%8D%E7%AB%AF/"><span class="card-category-list-name">前端</span><span class="card-category-list-count">2</span></a></li>
+            
+            </ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">已运行时间 :</div><div class="item-count" id="runtimeshow" data-publishDate="2020-03-09T16:00:00.000Z"></div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">60.1k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021&nbsp;<i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;"class="fas fa-heart"></i> By miller</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'forest',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script><h4>AIgonna</h4></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script></div></body></html>

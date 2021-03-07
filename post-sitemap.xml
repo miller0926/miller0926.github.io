@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="sitemap.xsl"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <url>
+        <loc>http://example.com/</loc>
+        <changefreq>daily</changefreq>
+        <priority>1</priority>
+    </url>
+
+
+    <url>
+        <loc>http://example.com/2020/11/14/1.Mikolov%E8%AE%BA%E6%96%87Efficient%20Estimation%20ofWord%20Representations%20in%20Vector%20Space%20%E7%AC%94%E8%AE%B0/</loc>
+        <lastmod>2021-03-06T14:26:57.871Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/12/12/CS224N%20Lecture%206%20Vanishing%20Gradients,%20Fancy%20RNNs,%20Seq2Seq/</loc>
+        <lastmod>2021-02-28T14:07:58.106Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/09/04/2.%20%E5%8F%B0%E6%B9%BE%E5%9B%BD%E7%AB%8B%E5%A4%A7%E5%AD%A6%20%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95/</loc>
+        <lastmod>2021-02-28T12:44:23.816Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/08/15/2.%E4%BA%8C%E5%8F%89%E6%A0%91/</loc>
+        <lastmod>2021-02-26T16:19:30.169Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/11/01/4.%E7%B1%BB%E7%9A%84%E7%BB%A7%E6%89%BF/</loc>
+        <lastmod>2021-02-26T14:03:12.459Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/12/14/CS224N%20Lecture%207%20Machine%20Translation,%20Attention,%20Subword%20Models/</loc>
+        <lastmod>2021-02-25T09:08:16.452Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/12/10/CS224N%20Lecture%205%20Recurrent%20Neural%20Networks%20and%20Language%20Models/</loc>
+        <lastmod>2021-02-25T08:56:45.384Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/12/08/CS224N%20Lecture%204%20Dependency%20Parsing/</loc>
+        <lastmod>2021-02-25T08:49:33.997Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/12/06/CS224N%20Lecture%203%20Backprop%20and%20Neural%20Networks/</loc>
+        <lastmod>2021-02-25T08:40:00.085Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/12/04/CS224N%20Lecture%202%20Word%20Vectors%202%20and%20Word%20Senses/</loc>
+        <lastmod>2021-02-25T08:35:32.082Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/12/02/CS224N%20Lecture%201%20Introduction%20and%20Word%20Vectors/</loc>
+        <lastmod>2021-02-24T06:48:11.069Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2021/01/28/hexo+butterfly/</loc>
+        <lastmod>2021-02-24T06:45:52.225Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/06/05/2.ResNet%20%E7%BD%91%E7%BB%9C/</loc>
+        <lastmod>2021-02-22T13:11:33.454Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/06/02/1.VGG%20%E7%BD%91%E7%BB%9C/</loc>
+        <lastmod>2021-02-22T02:54:40.925Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/07/04/Chapter06-Probability-and-Distributions/</loc>
+        <lastmod>2021-02-21T13:51:02.324Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/06/12/6.%20%E5%9F%BA%E6%9C%AC%E5%8F%A5%E6%B3%95/</loc>
+        <lastmod>2021-02-15T05:04:00.979Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/06/02/5.%20%E6%8C%87%E9%92%88/</loc>
+        <lastmod>2021-01-28T14:11:30.352Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/29/3.%E7%B1%BB%E7%9A%84%E5%B0%81%E8%A3%85/</loc>
+        <lastmod>2021-01-28T13:55:22.053Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/12/14/hexo+matrey%20blog%E6%90%AD%E5%BB%BA/</loc>
+        <lastmod>2021-01-27T13:12:18.193Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/04/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture1/</loc>
+        <lastmod>2020-12-20T07:47:33.175Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture2/</loc>
+        <lastmod>2020-12-20T07:43:07.523Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/10/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture3/</loc>
+        <lastmod>2020-12-20T07:30:37.451Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/11/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture4/</loc>
+        <lastmod>2020-12-20T07:20:42.355Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/14/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture5/</loc>
+        <lastmod>2020-12-20T07:14:04.010Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/19/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture6/</loc>
+        <lastmod>2020-12-20T07:05:30.988Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/22/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture7/</loc>
+        <lastmod>2020-12-20T06:55:19.025Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/23/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture8/</loc>
+        <lastmod>2020-12-20T06:41:29.624Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/24/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture9/</loc>
+        <lastmod>2020-12-20T06:36:07.110Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/28/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture10/</loc>
+        <lastmod>2020-12-20T06:32:12.331Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/29/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture11/</loc>
+        <lastmod>2020-12-20T06:00:53.091Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/07/01/Chapter05-Vector-Calculus/</loc>
+        <lastmod>2020-12-20T05:18:15.602Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/06/30/Chapter04-Matrix-Decompositions/</loc>
+        <lastmod>2020-12-20T05:15:28.224Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/29/1.%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</loc>
+        <lastmod>2020-12-20T03:41:31.753Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://example.com/2020/10/29/2.%E7%B1%BB%E7%9A%84%E6%9E%84%E5%BB%BA/</loc>
+        <lastmod>2020-12-20T03:41:31.753Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+</urlset>
+<!-- XML Sitemap generated by Hexo SEO Friendly Sitemap Generator -->

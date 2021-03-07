@@ -1,0 +1,397 @@
+<!DOCTYPE html><html class="hide-aside" lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chapter05:Vector calculus | AIgonna</title><meta name="keywords" content="机器学习,微积分,矩阵求导"><meta name="author" content="miller"><meta name="copyright" content="miller"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="Chapter 05: Vector calculus1. 单变量函数的微分1. 微分 derivative:   \frac{\mathrm{d} f}{\mathrm{d} x}:&#x3D;\lim _{h \rightarrow 0} \frac{f(x+h)-f(x)}{h} \tag{1}2. Taylor 级数 T_{\infty}(x)&#x3D;\sum_{k&#x3D;0}^{\infty} \frac{f">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter05:Vector calculus">
+<meta property="og:url" content="http://example.com/2020/07/01/Chapter05-Vector-Calculus/index.html">
+<meta property="og:site_name" content="AIgonna">
+<meta property="og:description" content="Chapter 05: Vector calculus1. 单变量函数的微分1. 微分 derivative:   \frac{\mathrm{d} f}{\mathrm{d} x}:&#x3D;\lim _{h \rightarrow 0} \frac{f(x+h)-f(x)}{h} \tag{1}2. Taylor 级数 T_{\infty}(x)&#x3D;\sum_{k&#x3D;0}^{\infty} \frac{f">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/ach.jpg">
+<meta property="article:published_time" content="2020-07-01T08:49:39.000Z">
+<meta property="article:modified_time" content="2020-12-20T05:18:15.602Z">
+<meta property="article:author" content="miller">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="微积分">
+<meta property="article:tag" content="矩阵求导">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/ach.jpg"><link rel="shortcut icon" href="/img/AI.png"><link rel="canonical" href="http://example.com/2020/07/01/Chapter05-Vector-Calculus/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-12-20 13:18:15'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 5.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/AI.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">34</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/ach.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">AIgonna</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Chapter05:Vector calculus</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2020-07-01T08:49:39.000Z" title="undefined 2020-07-01 16:49:39">2020-07-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Mathematic-for-machine-learning-%E7%AC%94%E8%AE%B0/">Mathematic for machine learning 笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="Chapter-05-Vector-calculus"><a href="#Chapter-05-Vector-calculus" class="headerlink" title="Chapter 05: Vector calculus"></a>Chapter 05: Vector calculus</h2><h3 id="1-单变量函数的微分"><a href="#1-单变量函数的微分" class="headerlink" title="1. 单变量函数的微分"></a>1. 单变量函数的微分</h3><h4 id="1-微分"><a href="#1-微分" class="headerlink" title="1. 微分"></a>1. 微分</h4><ul>
+<li>derivative:</li>
+</ul>
+<script type="math/tex; mode=display">
+\frac{\mathrm{d} f}{\mathrm{d} x}:=\lim _{h \rightarrow 0} \frac{f(x+h)-f(x)}{h} \tag{1}</script><h4 id="2-Taylor-级数"><a href="#2-Taylor-级数" class="headerlink" title="2. Taylor 级数"></a>2. Taylor 级数</h4><script type="math/tex; mode=display">
+T_{\infty}(x)=\sum_{k=0}^{\infty} \frac{f^{(k)}\left(x_{0}\right)}{k !}\left(x-x_{0}\right)^{k} \tag{2}</script><h4 id="3-微分法则"><a href="#3-微分法则" class="headerlink" title="3. 微分法则"></a>3. 微分法则</h4><ul>
+<li>Differentiation Rules:</li>
+</ul>
+<script type="math/tex; mode=display">
+\begin{align}
+\text{Product rule: }  &\quad(f(x) g(x))^{\prime}=f^{\prime}(x) g(x)+f(x) g^{\prime}(x)  \tag{3}
+
+\\ \text{Quotient rule: }
+ &\left(\frac{f(x)}{g(x)}\right)^{\prime}=\frac{f^{\prime}(x) g(x)-f(x) g^{\prime}(x)}{(g(x))^{2}} \tag{4}
+
+\\ \text{Sum rule: } &(f(x)+g(x))^{\prime}=f^{\prime}(x)+g^{\prime}(x) \tag{5}
+
+\\ \text{Chain rule: } &(g(f(x)))^{\prime}=(g \circ f)^{\prime}(x)=g^{\prime}(f(x)) f^{\prime}(x) \tag{6}
+
+\end{align}</script><p><strong>注：</strong>$g \circ f$ 记为复合函数$x \mapsto f(x) \mapsto g(f(x))$</p>
+<script type="math/tex; mode=display">
+\begin{align}
+\\ \text{例子：}
+\\ &h(x) = (2x+1)^{4} = g(f(x))
+\\ \text{即}&f(x) = 2x + 1 \text{,}\qquad g(f) = f^{4}
+
+\\ &f^{\prime}(x) = 2 \text{,}\qquad g^{\prime}(f)=4f^{3}
+
+\\ \text{所以}&h^{\prime}(x) = g^{\prime}(f)f^{\prime}(x)=4f^{3}\cdot2=8(2x+1)^{3}
+
+\end{align}</script><h3 id="2-部分微分和梯度"><a href="#2-部分微分和梯度" class="headerlink" title="2.部分微分和梯度"></a>2.部分微分和梯度</h3><ul>
+<li>Partial Differentiation andGradients</li>
+</ul>
+<h4 id="1-部分微分"><a href="#1-部分微分" class="headerlink" title="1.部分微分"></a>1.部分微分</h4><ul>
+<li>Partial Derivative:</li>
+</ul>
+<script type="math/tex; mode=display">
+\nabla_{\boldsymbol{x}} f=\operatorname{grad} f=\frac{\mathrm{d} f}{\mathrm{d} \boldsymbol{x}}=\left[\begin{array}{llll}
+\frac{\partial f(\boldsymbol{x})}{\partial x_{1}} & \frac{\partial f(\boldsymbol{x})}{\partial x_{2}} & \cdots & \frac{\partial f(\boldsymbol{x})}{\partial x_{n}}
+\end{array}\right] \in \mathbb{R}^{1 \times n} \tag{7}</script><p>即把对$x$的一阶导的集合写在一起形成一行,也可以转置后形成一列。</p>
+<h4 id="2-梯度"><a href="#2-梯度" class="headerlink" title="2. 梯度"></a>2. 梯度</h4><ul>
+<li>Gradient as a Row Vector</li>
+</ul>
+<p>将<strong>Gradient</strong>写作行向量的原因：</p>
+<ol>
+<li><p>我们始终可以把梯度推广到向量值函数$f:\mathbb{R}^{n} \rightarrow \mathbb{R}^{m}$;这能让梯度变成矩阵。</p>
+</li>
+<li><p>我们可以不考虑梯度维数来应用多变量链式法则。</p>
+<script type="math/tex; mode=display">
+\begin{align}
+\\ &\text{函数} f(x_{1}, x_{2}) = x_1^{2}x_2 + x_1x_2{3}\quad\text{其梯度为：}
+\\&\frac{\mathrm{d} f}{\mathrm{d} \boldsymbol{x}} = 
+\begin{bmatrix}
+\frac{\partial f(x_1, x_2)}{\partial x_1} & \frac{\partial f(x_1, x_2)}{\partial x_2}
+\end{bmatrix}
+
+= \begin{bmatrix}
+2x_1x_2^{3} & x_1^{2}+3x_1x_2^{2} 
+\end{bmatrix}
+
+\in \mathbb{R}^{\color{red} {1 \times 2}}
+\end{align}</script></li>
+</ol>
+<h4 id="3-Chain-Rule"><a href="#3-Chain-Rule" class="headerlink" title="3. Chain Rule"></a>3. Chain Rule</h4><script type="math/tex; mode=display">
+\frac{\mathrm{d} f}{\mathrm{d} t}=\left[\begin{array}{ll}
+\frac{\partial f}{\partial x_{1}} & \frac{\partial f}{\partial x_{2}}
+\end{array}\right]\left[\begin{array}{l}
+\frac{\partial x_{1}(t)}{\partial t} \\
+\frac{\partial x_{2}(t)}{\partial t}
+\end{array}\right]=\frac{\partial f}{\partial x_{1}} \frac{\partial x_{1}}{\partial t}+\frac{\partial f}{\partial x_{2}} \frac{\partial x_{2}}{\partial t} \tag{8}</script><p>用矩阵乘法获得梯度:</p>
+<script type="math/tex; mode=display">
+\frac{\mathrm{d} f}{\mathrm{d}(s, t)}=\frac{\partial f}{\partial \boldsymbol{x}} \frac{\partial \boldsymbol{x}}{\partial(s, t)}=
+
+\underbrace{\left[\frac{\partial f}{\partial x_{1}}, \frac{\partial f}{\partial x_{2}}\right]}_{=\frac{\partial f}{\partial \boldsymbol{x}}}
+
+\underbrace{\left[\begin{array}{ll}
+\frac{\partial x_{1}}{\partial s} & \frac{\partial x_{1}}{\partial t} \\
+\frac{\partial x_{2}}{\partial s} &\frac{\partial x_{2}}{\partial t}
+\end{array}\right]}_{=\frac{\partial \boldsymbol{x}}{\partial(s, t)}}</script><h4 id="4-向量值函数的梯度-从实数域推广到vector-field"><a href="#4-向量值函数的梯度-从实数域推广到vector-field" class="headerlink" title="4. 向量值函数的梯度(从实数域推广到vector field)"></a>4. 向量值函数的梯度(从实数域推广到vector field)</h4><script type="math/tex; mode=display">
+\boldsymbol{f}(\boldsymbol{x})=\left[\begin{array}{c}
+f_{1}(\boldsymbol{x}) \\
+\vdots \\
+f_{m}(\boldsymbol{x})
+\end{array}\right] \in \mathbb{R}^{m}</script><h4 id="5-Jacobian"><a href="#5-Jacobian" class="headerlink" title="5. Jacobian"></a>5. Jacobian</h4><p>所有向量值函数$\boldsymbol{f}: \mathbb{R}^{n} \rightarrow \mathbb{R}^{m}$的一阶导数的集合称作$\mathit{Jacobian}$。见如下公式：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+J=\nabla_{x} f=\frac{\mathrm{d} f(x)}{\mathrm{d} x}&=\left[\frac{\partial f(x)}{\partial x_{1}} \quad \cdots \quad \frac{\partial f(x)}{\partial x_{n}}\right] \tag{9}
+
+\\&=\left[\begin{array}{ccc}
+\frac{\partial f_{1}(\boldsymbol{x})}{\partial x_{1}} & \cdots & \frac{\partial f_{1}(\boldsymbol{x})}{\partial x_{n}} \\
+\vdots & & \vdots \\
+\frac{\partial f_{m}(\boldsymbol{x})}{\partial x_{1}} & \cdots & \frac{\partial f_{m}(\boldsymbol{x})}{\partial x_{n}}
+\end{array}\right] \tag{10}
+
+\\ \boldsymbol{x}=\left[\begin{array}{c}
+x_{1} \\
+\vdots \\
+x_{n}
+\end{array}\right], \quad J(i, j)
+
+&=\frac{\partial f_{i}}{\partial x_{j}} \tag{11}
+\end{align}</script><p>确定$\boldsymbol{f}(x)$偏导数维度：</p>
+<center>    <img style="border-radius: 0.3125em;    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);"     src="https://i.loli.net/2020/06/26/bYTjzB1PcOZFhSN.png?=raw" width="50%" height="50%">    
+ <br>    <div style="color:orange; border-bottom: 1px solid #d9d9d9;    display: inline-block;    color: #999;    padding: 2px;">偏导数维度：引用自https://mml-book.com</div> </center>
+
+<p>​    偏导数的维度：column由$\boldsymbol{f}(x)$决定；row由$\boldsymbol{x}$决定</p>
+<p>详解：</p>
+<ol>
+<li>$f:\mathbb{R} \rightarrow \mathbb{R}$ 梯度是个标量</li>
+<li>$f:\mathbb{R}^{N} \rightarrow \mathbb{R}$ 梯度是$1\times $N行向量(row)</li>
+<li>$f:\mathbb{R} \rightarrow \mathbb{R}^{M}$ 梯度是$M \times 1$列向量(column)</li>
+<li>$f:\mathbb{R}^{N} \rightarrow \mathbb{R}^{M}$ 梯度是$M \times N$矩阵(matrix)</li>
+</ol>
+<h5 id="可视化矩阵关于Vector的梯度计算（两种等价方法）"><a href="#可视化矩阵关于Vector的梯度计算（两种等价方法）" class="headerlink" title="可视化矩阵关于Vector的梯度计算（两种等价方法）"></a>可视化矩阵关于Vector的梯度计算（两种等价方法）</h5><ul>
+<li>方法(a):先计算$\frac {\partial \boldsymbol{A}} {\partial {x_1}}, \frac {\partial \boldsymbol{A}} {\partial {x_2}}, \frac {\partial \boldsymbol{A}} {\partial {x_3}}$（都是$4 \times 2$的tensor;再整理成$4\times2\times3$的tensor。</li>
+</ul>
+<center>    <img style="border-radius: 0.3125em;    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);"     src="https://i.loli.net/2020/06/29/itgacHYjVuInxSR.png?=raw" width=90% height=90%>    
+ <br>    <div style="color:orange; border-bottom: 1px solid #d9d9d9;    display: inline-block;    color: #999;    padding: 2px;">方法(a) 引用自https://mml-book.com</div> </center>
+
+<ul>
+<li>方法(b):先把$\boldsymbol {A} \in \mathbb{R}^{4 \times 2}$展平成向量$\tilde{A} \in \mathbb{R}^{8}$，然后计算其梯度$\frac{\mathrm{d} \tilde{\boldsymbol{A}}}{\mathrm{d} \boldsymbol{x}} \in \mathbb{R}^{8 \times 3}$,我们把得到的梯度tensor再reshape成图例形状。</li>
+</ul>
+<center>    <img style="border-radius: 0.3125em;    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);"     src="https://i.loli.net/2020/06/29/AolB2qsUWfMdJnE.png?=raw" width="90%" height="90%">    
+ <br>    <div style="color:orange; border-bottom: 1px solid #d9d9d9;    display: inline-block;    color: #999;    padding: 2px;">方法(b) 引用自https://mml-book.com</div> </center>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">miller</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2020/07/01/Chapter05-Vector-Calculus/">http://example.com/2020/07/01/Chapter05-Vector-Calculus/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">AIgonna</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><a class="post-meta__tags" href="/tags/%E5%BE%AE%E7%A7%AF%E5%88%86/">微积分</a><a class="post-meta__tags" href="/tags/%E7%9F%A9%E9%98%B5%E6%B1%82%E5%AF%BC/">矩阵求导</a></div><div class="post_share"><div class="social-share" data-image="/img/ach.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.png" target="_blank"><img class="post-qr-code-img" src="/img/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.png" target="_blank"><img class="post-qr-code-img" src="/img/alipay.png" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/07/04/Chapter06-Probability-and-Distributions/"><img class="prev-cover" src="/img/imgs/4.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Chapter 06 Probability and Distributions</div></div></a></div><div class="next-post pull-right"><a href="/2020/06/30/Chapter04-Matrix-Decompositions/"><img class="next-cover" src="/img/imgs/2.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Chapter04:Matrix Decompositions</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/10/29/机器学习的数学基础Lecture11/" title="Lecture 11  PageRank and Ridge Regression"><img class="cover" src="/img/imgs/5.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-29</div><div class="title">Lecture 11  PageRank and Ridge Regression</div></div></a></div><div><a href="/2020/10/28/机器学习的数学基础Lecture10/" title="Lecture 10 More on the SVD in Machine Learning"><img class="cover" src="/img/imgs/0.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-28</div><div class="title">Lecture 10 More on the SVD in Machine Learning</div></div></a></div><div><a href="/2020/10/24/机器学习的数学基础Lecture9/" title="Lecture 9 The SVD in Machine Learning"><img class="cover" src="/img/imgs/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-24</div><div class="title">Lecture 9 The SVD in Machine Learning</div></div></a></div><div><a href="/2020/10/23/机器学习的数学基础Lecture8/" title="Lecture 8 The Singular Value Decomposition"><img class="cover" src="/img/imgs/15.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-23</div><div class="title">Lecture 8 The Singular Value Decomposition</div></div></a></div><div><a href="/2020/10/22/机器学习的数学基础Lecture7/" title="Lecture 7 Introduction to the Singular Value Decomposition"><img class="cover" src="/img/imgs/0.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-22</div><div class="title">Lecture 7 Introduction to the Singular Value Decomposition</div></div></a></div><div><a href="/2020/10/19/机器学习的数学基础Lecture6/" title="Lecture 6 Finding Orthogonal Bases"><img class="cover" src="/img/imgs/8.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-19</div><div class="title">Lecture 6 Finding Orthogonal Bases</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter-05-Vector-calculus"><span class="toc-number">1.</span> <span class="toc-text">Chapter 05: Vector calculus</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%8D%95%E5%8F%98%E9%87%8F%E5%87%BD%E6%95%B0%E7%9A%84%E5%BE%AE%E5%88%86"><span class="toc-number">1.1.</span> <span class="toc-text">1. 单变量函数的微分</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%BE%AE%E5%88%86"><span class="toc-number">1.1.1.</span> <span class="toc-text">1. 微分</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Taylor-%E7%BA%A7%E6%95%B0"><span class="toc-number">1.1.2.</span> <span class="toc-text">2. Taylor 级数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%BE%AE%E5%88%86%E6%B3%95%E5%88%99"><span class="toc-number">1.1.3.</span> <span class="toc-text">3. 微分法则</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%83%A8%E5%88%86%E5%BE%AE%E5%88%86%E5%92%8C%E6%A2%AF%E5%BA%A6"><span class="toc-number">1.2.</span> <span class="toc-text">2.部分微分和梯度</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%83%A8%E5%88%86%E5%BE%AE%E5%88%86"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.部分微分</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%A2%AF%E5%BA%A6"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. 梯度</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Chain-Rule"><span class="toc-number">1.2.3.</span> <span class="toc-text">3. Chain Rule</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%90%91%E9%87%8F%E5%80%BC%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6-%E4%BB%8E%E5%AE%9E%E6%95%B0%E5%9F%9F%E6%8E%A8%E5%B9%BF%E5%88%B0vector-field"><span class="toc-number">1.2.4.</span> <span class="toc-text">4. 向量值函数的梯度(从实数域推广到vector field)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-Jacobian"><span class="toc-number">1.2.5.</span> <span class="toc-text">5. Jacobian</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8F%AF%E8%A7%86%E5%8C%96%E7%9F%A9%E9%98%B5%E5%85%B3%E4%BA%8EVector%E7%9A%84%E6%A2%AF%E5%BA%A6%E8%AE%A1%E7%AE%97%EF%BC%88%E4%B8%A4%E7%A7%8D%E7%AD%89%E4%BB%B7%E6%96%B9%E6%B3%95%EF%BC%89"><span class="toc-number">1.2.5.1.</span> <span class="toc-text">可视化矩阵关于Vector的梯度计算（两种等价方法）</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021&nbsp;<i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;"class="fas fa-heart"></i> By miller</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    loader: {
+      source: {
+        '[tex]/amsCd': '[tex]/amscd'
+      }
+    },
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        addClass: [200,() => {
+          document.querySelectorAll('mjx-container:not([display=\'true\']').forEach( node => {
+            const target = node.parentNode
+            if (!target.classList.contains('has-jax')) {
+              target.classList.add('mathjax-overflow')
+            }
+          })
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'forest',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: '5sVUTO1MTpgoo7pDynh6zYEM-MdYXbMMI',
+      appKey: 'vPUvOT1iP6YqcPPtYSqf8F7A',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign(initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script><h4>AIgonna</h4></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script></div></body></html>

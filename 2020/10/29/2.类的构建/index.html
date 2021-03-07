@@ -1,0 +1,377 @@
+<!DOCTYPE html><html class="hide-aside" lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>2.Python 类的构建 | AIgonna</title><meta name="keywords" content="Python,OOP"><meta name="author" content="miller"><meta name="copyright" content="miller"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="2.Python 类的构建1. Class1. class的定义1234class &lt;类名每个单词首字母大写&gt;:    &quot;&quot;&quot;类描述块&quot;&quot;&quot;    #解释    语句  ​    类描述：在类定义后的首行，以独立字符串形式定义，&lt;类名&gt;.__doc__属性来访问。  2. 初始化方法和self123class &amp;l">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.Python 类的构建">
+<meta property="og:url" content="http://example.com/2020/10/29/2.%E7%B1%BB%E7%9A%84%E6%9E%84%E5%BB%BA/index.html">
+<meta property="og:site_name" content="AIgonna">
+<meta property="og:description" content="2.Python 类的构建1. Class1. class的定义1234class &lt;类名每个单词首字母大写&gt;:    &quot;&quot;&quot;类描述块&quot;&quot;&quot;    #解释    语句  ​    类描述：在类定义后的首行，以独立字符串形式定义，&lt;类名&gt;.__doc__属性来访问。  2. 初始化方法和self123class &amp;l">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/imgs/4.jpg">
+<meta property="article:published_time" content="2020-10-29T13:49:39.000Z">
+<meta property="article:modified_time" content="2020-12-20T03:41:31.753Z">
+<meta property="article:author" content="miller">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="OOP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/imgs/4.jpg"><link rel="shortcut icon" href="/img/AI.png"><link rel="canonical" href="http://example.com/2020/10/29/2.%E7%B1%BB%E7%9A%84%E6%9E%84%E5%BB%BA/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-12-20 11:41:31'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 5.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/AI.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">34</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/imgs/4.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">AIgonna</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">2.Python 类的构建</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2020-10-29T13:49:39.000Z" title="undefined 2020-10-29 21:49:39">2020-10-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Python%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/">Python面向对象</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>4分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="2-Python-类的构建"><a href="#2-Python-类的构建" class="headerlink" title="2.Python 类的构建"></a>2.Python 类的构建</h2><h3 id="1-Class"><a href="#1-Class" class="headerlink" title="1. Class"></a>1. Class</h3><h4 id="1-class的定义"><a href="#1-class的定义" class="headerlink" title="1. class的定义"></a>1. class的定义</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> &lt;类名每个单词首字母大写&gt;:</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;类描述块&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment">#解释</span></span><br><span class="line">    语句</span><br></pre></td></tr></table></figure>
+<ul>
+<li>​    类描述：在类定义后的首行，以独立字符串形式定义，<code>&lt;类名&gt;.__doc__</code>属性来访问。</li>
+</ul>
+<h4 id="2-初始化方法和self"><a href="#2-初始化方法和self" class="headerlink" title="2. 初始化方法和self"></a>2. 初始化方法和self</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> &lt;类名&gt;：</span></span><br><span class="line"><span class="class">	<span class="title">def</span> <span class="title">__init__</span>(<span class="params">self, [参数列表]</span>)：</span></span><br><span class="line"><span class="class">		语句块</span></span><br></pre></td></tr></table></figure>
+<p>类实例化时所用的方法，可以接收参数并完成初识操作。</p>
+<p><code>__init__</code>:</p>
+<ul>
+<li>参数：第一个参数是<code>self</code>，表示类<strong>实例自身</strong>，<strong>其它参数是实例参数</strong>。</li>
+<li>返回值：构造方法没有返回值，或者返回<code>None</code>，不然<code>TypeError</code>.</li>
+</ul>
+<p><code>self</code>: 在类定义内部代表类的实例</p>
+<ul>
+<li><code>self</code>是Python面向对象约定的一个类参数</li>
+<li><code>self</code>代表类的实例，在类内部，<code>self</code>用于组合访问实例相关的属性和方法</li>
+<li>相比，类名代表类对象本身</li>
+</ul>
+<h4 id="3-类的属性和方法"><a href="#3-类的属性和方法" class="headerlink" title="3. 类的属性和方法"></a>3. 类的属性和方法</h4><ul>
+<li>类的属性：类中定义的变量，用来描述类的一些特性参数</li>
+<li>类的方法：类中定义且与类相关的函数，用来给出类的操作功能</li>
+<li>属性和方法是类对外交互所提供的两种接口方式</li>
+</ul>
+<h5 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h5><ul>
+<li><p>类属性：类对象的属性，由所有实例对象所共享</p>
+</li>
+<li><p>实例属性：实例对象的属性，由各实例对象所共享</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> &lt;类名&gt;：</span></span><br><span class="line">	&lt;类属性名&gt; = &lt;类属性初值&gt;</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, [参数列表]</span>):</span></span><br><span class="line">		self.&lt;实例属性名&gt; = &lt;实例属性初值&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>类属性</strong>实例</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PeopleClass</span>:</span></span><br><span class="line">    init_num = <span class="number">0</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, name, age</span>):</span></span><br><span class="line">        self.name = name</span><br><span class="line">        self.age = age</span><br><span class="line">        PeopleClass.init_num += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">p1 = PeopleClass(<span class="string">&quot;Tom&quot;</span>, <span class="number">23</span>)</span><br><span class="line">p2 = PeopleClass(<span class="string">&quot;Jack&quot;</span>, <span class="number">24</span>)</span><br><span class="line">print(<span class="string">&quot;类总数:&quot;</span>, PeopleClass.init_num)</span><br><span class="line">print(p1.name, p2.name)</span><br><span class="line"></span><br><span class="line">&gt;&gt;</span><br><span class="line">类总数: <span class="number">2</span></span><br><span class="line">Tom Jack</span><br></pre></td></tr></table></figure>
+<p>每次实例化，都会调用<code>__init__</code>方法，那么累变量改变为2，因此类属性也为2。</p>
+<p><strong>属性是类内部定义的变量</strong></p>
+<ul>
+<li>类属性：类对象的属性，有所有实例对象所共享<ul>
+<li>访问：&lt;类名&gt;.&lt;类属性&gt; 或 &lt;对象名&gt;.&lt;类属性&gt; </li>
+</ul>
+</li>
+<li>实例属性：实例对象的属性，由各实例对象所独享<ul>
+<li>访问：&lt;对象名&gt;.&lt;实例属性&gt; </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h5><p><strong>方法</strong>是类内部定义的函数</p>
+<ul>
+<li>实例方法：实例对象的方法，由各实例对象独享，最常用的形式</li>
+<li>类方法： <strong>类对象</strong>的方法，由<strong>所有实例对象</strong>共享</li>
+<li>自由方法：类中的一个普通函数，由类所在命名空间管理，<strong>类对象独享</strong></li>
+<li>静态方法：类中的一个普通函数，由<strong>类对象和实例对象共享</strong></li>
+<li>保留方法： 由双下划线开始和结束的方法，保留使用,如<code>__len__()</code></li>
+</ul>
+<p><strong>实例方法</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> &lt;类名&gt;：</span></span><br><span class="line"><span class="class">    <span class="title">def</span> &lt;方法名&gt;(<span class="params">self, [参数列表]</span>)：</span></span><br><span class="line"><span class="class">        语句</span></span><br><span class="line"><span class="class"></span></span><br></pre></td></tr></table></figure>
+<p>​    实例方法采用&lt;对象名&gt;.&lt;方法名&gt;([参数列表])方式使用</p>
+<p><strong>类方法</strong></p>
+<p>l    类方法是与类对象相关的函数，由所有实例对象共享</p>
+<p>​        </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> &lt;类名&gt;:</span></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> &lt;方法名&gt;(<span class="params">cls, [参数列表]</span>):</span></span><br></pre></td></tr></table></figure>
+<p>类方法采用&lt;类名&gt;.&lt;方法名&gt;([参数列表]) 或&lt;对象名&gt;.&lt;方法名&gt;([参数列表])方式使用。</p>
+<ul>
+<li>类方法至少包含一个参数，表示类对象，一般用<code>cls</code></li>
+<li><code>@classmethod</code> 是装饰器，类方法定义所必须</li>
+<li>类方法只能操作类属性和其他类方法，不能操作实例属性和实例方法</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://www.programiz.com/python-programming/methods/built-in/classmethod">类方法的使用</a></p>
+<p><strong>自由方法</strong></p>
+<p>自由方法是定义在类命名空间中的普通函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> &lt;类名&gt;:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> &lt;方法名&gt;(<span class="params">cls, [参数列表]</span>):</span></span><br><span class="line">        语句</span><br></pre></td></tr></table></figure>
+<p>自由方法采用&lt;类名&gt;.&lt;方法名&gt;([参数列表]) 方式使用。&lt;类名&gt;表示命名空间。</p>
+<ul>
+<li>自由方法不需要<code>self</code>、<code>cls</code>这类参数，可以没有参数</li>
+<li>自由方法只能操作类属性和类方法，不能操作实例属性和实例方法</li>
+<li>自由方法的使用只能使用&lt;类名&gt;</li>
+</ul>
+<p><strong>静态方法</strong></p>
+<p>静态方法是定义在类中的普通函数，能够被所有实例对象共享</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> &lt;类名&gt;:</span></span><br><span class="line"><span class="meta">	@staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> &lt;方法名&gt;(<span class="params"> [参数列表]</span>):</span></span><br><span class="line">        语句</span><br></pre></td></tr></table></figure>
+<p>静态方法采用&lt;类名&gt;.&lt;方法名&gt;([参数列表]) 或&lt;对象名&gt;.&lt;方法名&gt;([参数列表])方式使用。</p>
+<ul>
+<li>静态方法可以没有参数，可以理解为定义在类中的普通函数</li>
+<li>@staticmethod是装饰器，静态方法定义所必须</li>
+<li>静态方法只能操作类属性和其他类方法， 不能操作实例属性和实例方法</li>
+<li>相比自由方法，静态方法能够使用<strong>类名</strong>和<strong>对象名</strong>两种操作方式使用</li>
+</ul>
+<h4 id="4-类的析构函数"><a href="#4-类的析构函数" class="headerlink" title="4. 类的析构函数"></a>4. 类的析构函数</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> &lt;类名&gt;:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__del__</span>(<span class="params">self</span>):</span></span><br><span class="line">        语句</span><br></pre></td></tr></table></figure>
+<p>析构函数在<strong>真实</strong>删除实例对象是被调用。</p>
+<ul>
+<li>函数名和参数：Python解释器内部约定，保留方法</li>
+<li>调用条件：当实例对象被真实删除是，才调用该函数内语句</li>
+<li>真实删除：当前对象的引用次数为0或当前程序退出(垃圾回收机制)</li>
+</ul>
+<p><strong>Python类的内存管理</strong></p>
+<ul>
+<li>实例对象：真实创建的对象，分配对象内存</li>
+<li>实例引用：实例的指针，仅分配指针内存</li>
+</ul>
+<p>内存管理机制：</p>
+<ul>
+<li><p>在删除对象前，Python解释器会检查引用次数</p>
+</li>
+<li><p>引用次数不为0，则仅删除当前引用；0，则删除对象</p>
+</li>
+<li><p>如果程序退出，则由垃圾回收机制删除对象</p>
+<p>利用<code>sys.getrefcount(&lt;对象名&gt;)</code>获取对象引用次数，其返回值为被引用值+1.</p>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">miller</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2020/10/29/2.%E7%B1%BB%E7%9A%84%E6%9E%84%E5%BB%BA/">http://example.com/2020/10/29/2.%E7%B1%BB%E7%9A%84%E6%9E%84%E5%BB%BA/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">AIgonna</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python/">Python</a><a class="post-meta__tags" href="/tags/OOP/">OOP</a></div><div class="post_share"><div class="social-share" data-image="/img/imgs/4.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.png" target="_blank"><img class="post-qr-code-img" src="/img/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.png" target="_blank"><img class="post-qr-code-img" src="/img/alipay.png" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/10/29/1.%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/"><img class="prev-cover" src="/img/imgs/11.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">1. 面向对象</div></div></a></div><div class="next-post pull-right"><a href="/2020/10/29/3.%E7%B1%BB%E7%9A%84%E5%B0%81%E8%A3%85/"><img class="next-cover" src="/img/imgs/7.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">3. 类的封装</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/11/01/4.类的继承/" title="4. 类的继承"><img class="cover" src="/img/imgs/6.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-01</div><div class="title">4. 类的继承</div></div></a></div><div><a href="/2020/10/29/1.面向对象/" title="1. 面向对象"><img class="cover" src="/img/imgs/11.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-29</div><div class="title">1. 面向对象</div></div></a></div><div><a href="/2020/10/29/3.类的封装/" title="3. 类的封装"><img class="cover" src="/img/imgs/7.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-29</div><div class="title">3. 类的封装</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Python-%E7%B1%BB%E7%9A%84%E6%9E%84%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">2.Python 类的构建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Class"><span class="toc-number">1.1.</span> <span class="toc-text">1. Class</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-class%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">1. class的定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%88%9D%E5%A7%8B%E5%8C%96%E6%96%B9%E6%B3%95%E5%92%8Cself"><span class="toc-number">1.1.2.</span> <span class="toc-text">2. 初始化方法和self</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%B1%BB%E7%9A%84%E5%B1%9E%E6%80%A7%E5%92%8C%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.3.</span> <span class="toc-text">3. 类的属性和方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B1%9E%E6%80%A7"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">属性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%B9%E6%B3%95"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">方法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E7%B1%BB%E7%9A%84%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0"><span class="toc-number">1.1.4.</span> <span class="toc-text">4. 类的析构函数</span></a></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021&nbsp;<i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;"class="fas fa-heart"></i> By miller</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    loader: {
+      source: {
+        '[tex]/amsCd': '[tex]/amscd'
+      }
+    },
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        addClass: [200,() => {
+          document.querySelectorAll('mjx-container:not([display=\'true\']').forEach( node => {
+            const target = node.parentNode
+            if (!target.classList.contains('has-jax')) {
+              target.classList.add('mathjax-overflow')
+            }
+          })
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'forest',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: '5sVUTO1MTpgoo7pDynh6zYEM-MdYXbMMI',
+      appKey: 'vPUvOT1iP6YqcPPtYSqf8F7A',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign(initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script><h4>AIgonna</h4></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script></div></body></html>

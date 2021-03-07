@@ -1,0 +1,372 @@
+<!DOCTYPE html><html class="hide-aside" lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AIgonna - AIgonna</title><meta name="author" content="miller"><meta name="copyright" content="miller"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="Python&#x2F;ML&#x2F;NLP&#x2F;CV">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AIgonna">
+<meta property="og:url" content="http://example.com/page/3/index.html">
+<meta property="og:site_name" content="AIgonna">
+<meta property="og:description" content="Python&#x2F;ML&#x2F;NLP&#x2F;CV">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/AI.png">
+<meta property="article:author" content="miller">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/AI.png"><link rel="shortcut icon" href="/img/AI.png"><link rel="canonical" href="http://example.com/page/3/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: false,
+  isHome: true,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2021-03-07 15:48:16'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 5.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/AI.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">34</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url(/img/ach.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">AIgonna</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">AIgonna</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/miller0926" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:tensortimes@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/10/14/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture5/" title="Lecture 5 Subspaces, Bases, and Projections">     <img class="post_bg" src="/img/imgs/7.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="Lecture 5 Subspaces, Bases, and Projections"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/10/14/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture5/" title="Lecture 5 Subspaces, Bases, and Projections">Lecture 5 Subspaces, Bases, and Projections</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-14T15:49:39.000Z" title="发表于 2020-10-14 23:49:39">2020-10-14</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/CMSC35300-Mathematics-Foundations-of-ML/">CMSC35300 Mathematics Foundations of ML</a></span></div><div class="content">Lecture 5 Subspaces, Bases, and Projections1.回想最小二乘的几何意义引入span
+上面的平面可有$X$的列向量的张成空间$X$。
+
+span(cols(X)) =  { v \in \mathbb{R}^n \ v=w_1X_1 + w_2X_2+\cdots+ w_pXp \quad for \ some \ w_1, w_2, \cdots, w_p  }2. subspace
+If the cols of $X$ are Linearly Independent, $X$ is a subspace. Then  they form a basis for $X$.
+上上图中的(绿色点)$\hat {\underline y}$是$\underline{y}$在$X$上的投影。
+
+vertical plane
+horizontal plane
+子空间永远包含原点或者说$\overrightarrow{0}$。
+
+3. 怎么表示一个子空间?
+
+用一组向量的集合作为一个张成子空间
+用一组线性无关的向量张成子空间，这组向量叫一组基
+用一组正交 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/10/11/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture4/" title="Lecture 4 Least squares and  Optimization">     <img class="post_bg" src="/img/imgs/5.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="Lecture 4 Least squares and  Optimization"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/10/11/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture4/" title="Lecture 4 Least squares and  Optimization">Lecture 4 Least squares and  Optimization</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-11T15:49:39.000Z" title="发表于 2020-10-11 23:49:39">2020-10-11</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/CMSC35300-Mathematics-Foundations-of-ML/">CMSC35300 Mathematics Foundations of ML</a></span></div><div class="content">Lecture 4 Least squares and  Optimization1. 最小二乘估计
+最小二乘估计(上节课没讲的)：
+如果列向量都是线性无关的找到最小化残差和的$w$是：
+
+\begin{aligned}
+\hat {\underline w}&=(X^TX)^{-1}X^Ty
+\\ \Rightarrow \hat {\underline y}&=X \hat {\underline w}
+ =X(X^TX)^{-1}X^Ty
+\end{aligned}\tag{1}其中，$(X^TX)^{-1}X^T$又叫pseudo-inverse， 伪逆。
+$P_{Xy}$投影$y$到$X$上。
+2. 最小二乘法分类
+二分类就是把$$输入到sign函数得到其输出。
+3. 优化方法
+2范数或者欧几里得范数：
+
+\lVert  x\rVert^2_{2}  = \sum^n_{i=1}x_i^2=x^Tx=\tag{2}所以：
+
+\begin{aligned}
+arg \ min_w\lVert  y-Xw\rVert^2_2 &=arg \ min_w \ (y-Xw)^T(y- ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/10/10/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture3/" title="Lecture 3 Least squares and geometry">     <img class="post_bg" src="/img/imgs/14.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="Lecture 3 Least squares and geometry"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/10/10/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture3/" title="Lecture 3 Least squares and geometry">Lecture 3 Least squares and geometry</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-10T15:49:39.000Z" title="发表于 2020-10-10 23:49:39">2020-10-10</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/CMSC35300-Mathematics-Foundations-of-ML/">CMSC35300 Mathematics Foundations of ML</a></span></div><div class="content">Lecture 3 Least squares and geometry1.最小二乘法目标：从一些特征向量$x$学到预测标签$y$。建立一个线性模型，
+
+\begin{aligned}
+\hat y_i &= \left \langle X_i, w\right \rangle=X_i^Tw=w^TX_i\\
+&=w_1X_{i1} + w_2X_{i2}+\cdots+w_pX_{ip}
+\end{aligned}\tag{1}需要找到$w$来使得$\hat y_i = y_i \quad for i = 1, 2, \cdots, n$ 
+1.最小二乘法怎么来的?
+因为残差residual error为：
+
+r_i=r_i(\underline{w})=y_i - 找到最小化残差和的$w$。（式2中第一个式子，第二个式欧式距离）
+
+\begin{aligned}
+\lVert r_i \rVert^2_{2} &= \sum ^n _{i=1}r_i^2
+ \\
+  \lVert r_i \rVert_{2}&=\left(\sum ^n _{i=1}r_i^2 \right)^{ ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/10/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture2/" title="Lecture 2 Vectors and Matrices in Machine learning">     <img class="post_bg" src="/img/imgs/5.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="Lecture 2 Vectors and Matrices in Machine learning"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/10/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture2/" title="Lecture 2 Vectors and Matrices in Machine learning">Lecture 2 Vectors and Matrices in Machine learning</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-05T15:19:39.000Z" title="发表于 2020-10-05 23:19:39">2020-10-05</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/CMSC35300-Mathematics-Foundations-of-ML/">CMSC35300 Mathematics Foundations of ML</a></span></div><div class="content">Lecture 2 机器学习中的向量和矩阵1. 线性模型
+我们可以理解$X_i \in \mathbb{R}^p$为$p$个一系列的数值特征，一般写作一个列向量。
+
+{X}_{i}=\left[\begin{array}{c}
+X_{i 1} \\
+x_{i 2} \\
+\vdots \\
+X_{i p}
+\end{array}\right] \in \mathbb{R}^{p}\tag{1}从训练数据，对于新的新样本$X_0$学习如何预测标签(或者目标值)$\hat{y}$。
+例如线性模型，
+
+\begin{array}{l}
+\hat{y}=w_{1} x_{01}+w_{2} x_{02}+\cdots w_{p} x_{0 p} \\
+w_{1}, \ldots, w_{p}=\text { weights to be learned from data }
+\end{array}\tag{2}using training data to find $W$, such that} $\hat{y_i}\approx y_i, \ for \ i=1, \ldots, n $ . ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/10/04/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture1/" title="Lecture 1 Introduction">     <img class="post_bg" src="/img/imgs/2.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="Lecture 1 Introduction"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/10/04/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture1/" title="Lecture 1 Introduction">Lecture 1 Introduction</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-10-04T15:49:39.000Z" title="发表于 2020-10-04 23:49:39">2020-10-04</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/CMSC35300-Mathematics-Foundations-of-ML/">CMSC35300 Mathematics Foundations of ML</a></span></div><div class="content">Lecture 1 Introduction本节最主要就是引入机器学习的元素。教授Rebecca Willett 用一个区分笑脸的任务介绍了机器学习的基本步骤。
+
+
+
+想象我们想用一张脸部图片来决定这个人是否微笑。
+关键想法：我们用一个模型表示脸是否在笑——一种数据的数学表示。
+基本步骤：
+
+收集原始数据——例如， 脸部图像
+
+预处理——不丢失相关信息的条件下，做数据变换来简化后面操作。例如，剪裁图像到标准尺寸，一张图一张脸，脸部在图像中间。
+
+特征提取——通过提取模型相关的特征或特性来简化数据(基于深度神经网络的现代图像识别系统这个步骤不是必须的)。例如，每对脸部坐标的距离。
+
+生成训练样本——我们用来学习模型的大量样本的集合。
+
+​    $(x_i, y_I) \quad for \quad i=1, \ldots, n$  其中，
+n ： 训练样本数目 \\
+y_i ： 第i个样本标签\\
+x_i ： 第i个样本特征\\
+x_{ij} ：第个样本的第j个特征
+
+
+选择loss function——衡量我们模型预测跟真实值之间的接近程度。 loss = \sum^n_{i=1}\ ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/09/04/2.%20%E5%8F%B0%E6%B9%BE%E5%9B%BD%E7%AB%8B%E5%A4%A7%E5%AD%A6%20%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95/" title="Backpropagation 梯度推导 台湾国立大学应用深度学习">     <img class="post_bg" src="/img/adl.png" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="Backpropagation 梯度推导 台湾国立大学应用深度学习"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/09/04/2.%20%E5%8F%B0%E6%B9%BE%E5%9B%BD%E7%AB%8B%E5%A4%A7%E5%AD%A6%20%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD%E7%AE%97%E6%B3%95/" title="Backpropagation 梯度推导 台湾国立大学应用深度学习">Backpropagation 梯度推导 台湾国立大学应用深度学习</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-04T12:20:31.000Z" title="发表于 2020-09-04 20:20:31">2020-09-04</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/2020-Spring-NTU-ADL/">2020 Spring NTU ADL</a></span></div><div class="content">Backpropagation 算法推导本文是NTU陈蕴侬教授，应用深度学习课程反向传播算法推导的笔记。原文在：200310_Backprop.pdf
+1. 全连接神经网络的公式
+如图所示，全连接前馈神经网络，实现了f: \mathbb{R}^N \to \mathbb{R}^M
+
+y = f(x) = \delta(W^L\cdots\delta(W^2\delta(W^1x+b^1)+b^2)\cdots+b^L)先定义一些参数：
+
+\begin{aligned}
+&a_i^l: 第l层第i个神经元的输出
+\\ &a^l: 第l层的输出向量
+\\
+\\ &z_i^l:第l层第i个神经元激活函数的输入
+\\ &z^l:第l层神经元激活函数的输入向量
+\\
+\\ &w_{ij}^l:从i到j的第l层的神经元权重
+\\ &w^l:第l层的神经元权重向量
+\\
+\\ &b_i^l:第l层第i个神经元的偏置
+\\ &b^l:第l层的神经元偏置向量
+\end{aligned}
+具体来说， 先看最后一层关系——从a到z,如上图。而从z到a：如下图
+
+注意z到a的中间加了激活函数。这里也会产生一个 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/08/15/2.%E4%BA%8C%E5%8F%89%E6%A0%91/" title="2. 二叉树">     <img class="post_bg" src="/img/imgs/13.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="2. 二叉树"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/08/15/2.%E4%BA%8C%E5%8F%89%E6%A0%91/" title="2. 二叉树">2. 二叉树</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-08-15T10:49:39.000Z" title="发表于 2020-08-15 18:49:39">2020-08-15</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/Data-Structure-and-Algorithm/">Data Structure and Algorithm</a></span></div><div class="content">2. 二叉树1. 二叉树基本概念1. 节点
+节点
+根节点
+父节点
+子节点
+兄弟节点
+
+
+上图中，A 节点就是 B 节点的父节点，B 节点是 A 节点的子节点。B、C、D 这三个节点的父节点是同一个节点，所以它们之间互称为兄弟节点。我们把没有父节点的节点叫作根节点，也就是图中的节点 E。我们把没有子节点的节点叫作叶子节点或者叶节点，比如图中的 G、H、I、J、K、L 都是叶子节点。
+一棵树没有任何节点，称为空树
+一棵树可以只有一个节点，也就是根节点
+子树， 左子树， 右子树
+2. 度
+节点的度(degree): 子树的个数
+
+树的度： 所有节点度中的最大值
+
+叶子节点(leaf): 度为0的节点
+
+非叶子节点：度不为0的节点
+
+
+3. 层数 和 深度
+
+层数：根节点在第一层， 根节点的子节点在第二层，以此类推(也有从0层计算)
+
+节点的深度：从根节点到当前节点的唯一路径上的节点总数 
+
+节点的高度：从当前节点到最远叶子节点的路径上的节点总数(边数)
+
+树的深度：所有节点深度中的最大值
+
+树的高度：所有节点高度的最大值
+
+树的深度等于树的高度
+
+
+4. 有序树、无序树、森林
+有序树
+树种任 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/07/04/Chapter06-Probability-and-Distributions/" title="Chapter 06 Probability and Distributions">     <img class="post_bg" src="/img/imgs/4.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="Chapter 06 Probability and Distributions"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/07/04/Chapter06-Probability-and-Distributions/" title="Chapter 06 Probability and Distributions">Chapter 06 Probability and Distributions</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-07-04T05:49:39.000Z" title="发表于 2020-07-04 13:49:39">2020-07-04</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/Mathematic-for-machine-learning-%E7%AC%94%E8%AE%B0/">Mathematic for machine learning 笔记</a></span></div><div class="content">Chapter 06: Probability and Distributions
+中英名词对照：
+PMF：Probability Mass Function(概率质量函数)
+PDF： Probability Density Function(概率密度函数)
+CDF：Cumulative Distribution Function (累积分布函数)
+i.i.d：Independent and identically distributed
+median: 中位数
+mode： 众数
+
+
+1. Sum Rule, Product Rule, and Bayes’ Theorem
+sum rule:
+
+p(\boldsymbol{x})=
+\left\{\begin{array}{ll}
+\sum_{\boldsymbol{y} \in \mathcal{Y}} p(\boldsymbol{x}, \boldsymbol{y}) & \text { if } \boldsymbol{y} \text { is discrete } \\
+\int_{\mathcal{Y}} p(\bolds ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/07/01/Chapter05-Vector-Calculus/" title="Chapter05:Vector calculus">     <img class="post_bg" src="/img/ach.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="Chapter05:Vector calculus"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/07/01/Chapter05-Vector-Calculus/" title="Chapter05:Vector calculus">Chapter05:Vector calculus</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-07-01T08:49:39.000Z" title="发表于 2020-07-01 16:49:39">2020-07-01</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/Mathematic-for-machine-learning-%E7%AC%94%E8%AE%B0/">Mathematic for machine learning 笔记</a></span></div><div class="content">Chapter 05: Vector calculus1. 单变量函数的微分1. 微分
+derivative:
+
+
+\frac{\mathrm{d} f}{\mathrm{d} x}:=\lim _{h \rightarrow 0} \frac{f(x+h)-f(x)}{h} \tag{1}2. Taylor 级数
+T_{\infty}(x)=\sum_{k=0}^{\infty} \frac{f^{(k)}\left(x_{0}\right)}{k !}\left(x-x_{0}\right)^{k} \tag{2}3. 微分法则
+Differentiation Rules:
+
+
+\begin{align}
+\text{Product rule: }  &\quad(f(x) g(x))^{\prime}=f^{\prime}(x) g(x)+f(x) g^{\prime}(x)  \tag{3}
+
+\\ \text{Quotient rule: }
+ &\left(\frac{f(x)}{g(x)}\right)^{\prime}=\frac{f^{\prime}(x) g(x)- ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/06/30/Chapter04-Matrix-Decompositions/" title="Chapter04:Matrix Decompositions">     <img class="post_bg" src="/img/imgs/2.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="Chapter04:Matrix Decompositions"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/06/30/Chapter04-Matrix-Decompositions/" title="Chapter04:Matrix Decompositions">Chapter04:Matrix Decompositions</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-06-30T08:49:39.000Z" title="发表于 2020-06-30 16:49:39">2020-06-30</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/Mathematic-for-machine-learning-%E7%AC%94%E8%AE%B0/">Mathematic for machine learning 笔记</a></span></div><div class="content">Matrix Decompositions3. Cholesky DecompositionCholesky分解 : 一个对称，正定的矩阵$A$
+能被因式分解成一个积：$A = L L^{T}$,$L$是一个有正的对角元素的下三角矩阵：
+
+\begin{bmatrix}  
+  a_{11} & \cdots & a_{1n} \\  
+  \vdots & \ddots & \vdots \\  
+  a_{n1} & \cdots & a_{nn}   
+\end{bmatrix}
+=\begin{bmatrix}  
+  l_{11} & \cdots & 0 \\  
+  \vdots & \ddots & \vdots \\  
+ l_{n1} & \cdots & l_{nn}   
+\end{bmatrix} \begin{bmatrix}  
+l_{11} & \cdots & l_{n1} \\  
+  \vdots & \ddots & \vdots \\  
+  0 & \cdots & l_{nn}   
+\end{bmatrix}$L$被称作$A$科斯基因子， ...</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/2/"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/AI.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">miller</div><div class="author-info__description">Python/ML/NLP/CV</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">34</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/miller0926"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/miller0926" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:tensortimes@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">终不似，少年游！</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/01/28/hexo+butterfly/" title="hexo + butterfly blog安装"><img src="/img/imgs/6.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="hexo + butterfly blog安装"/></a><div class="content"><a class="title" href="/2021/01/28/hexo+butterfly/" title="hexo + butterfly blog安装">hexo + butterfly blog安装</a><time datetime="2021-01-28T11:49:39.000Z" title="发表于 2021-01-28 19:49:39">2021-01-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/14/CS224N%20Lecture%207%20Machine%20Translation,%20Attention,%20Subword%20Models/" title="CS224N Lecture 7 Machine Translation, Attention, Subword Models"><img src="/img/imgs/14.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="CS224N Lecture 7 Machine Translation, Attention, Subword Models"/></a><div class="content"><a class="title" href="/2020/12/14/CS224N%20Lecture%207%20Machine%20Translation,%20Attention,%20Subword%20Models/" title="CS224N Lecture 7 Machine Translation, Attention, Subword Models">CS224N Lecture 7 Machine Translation, Attention, Subword Models</a><time datetime="2020-12-14T15:23:31.000Z" title="发表于 2020-12-14 23:23:31">2020-12-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/14/hexo+matrey%20blog%E6%90%AD%E5%BB%BA/" title="1. Hexo + Matery blog 搭建"><img src="/img/imgs/7.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="1. Hexo + Matery blog 搭建"/></a><div class="content"><a class="title" href="/2020/12/14/hexo+matrey%20blog%E6%90%AD%E5%BB%BA/" title="1. Hexo + Matery blog 搭建">1. Hexo + Matery blog 搭建</a><time datetime="2020-12-14T05:49:39.000Z" title="发表于 2020-12-14 13:49:39">2020-12-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/12/CS224N%20Lecture%206%20Vanishing%20Gradients,%20Fancy%20RNNs,%20Seq2Seq/" title="CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq"><img src="/img/imgs/14.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq"/></a><div class="content"><a class="title" href="/2020/12/12/CS224N%20Lecture%206%20Vanishing%20Gradients,%20Fancy%20RNNs,%20Seq2Seq/" title="CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq">CS224N Lecture 6 Vanishing Gradients, Fancy RNNs, Seq2Seq</a><time datetime="2020-12-12T13:23:31.000Z" title="发表于 2020-12-12 21:23:31">2020-12-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2020/12/10/CS224N%20Lecture%205%20Recurrent%20Neural%20Networks%20and%20Language%20Models/" title="CS224N Lecture 5 Recurrent Neural Networks and Language Models"><img src="/img/imgs/5.jpg" onerror="this.onerror=null;this.src='/img/imgs/0.jpg'" alt="CS224N Lecture 5 Recurrent Neural Networks and Language Models"/></a><div class="content"><a class="title" href="/2020/12/10/CS224N%20Lecture%205%20Recurrent%20Neural%20Networks%20and%20Language%20Models/" title="CS224N Lecture 5 Recurrent Neural Networks and Language Models">CS224N Lecture 5 Recurrent Neural Networks and Language Models</a><time datetime="2020-12-10T14:20:31.000Z" title="发表于 2020-12-10 22:20:31">2020-12-10</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline"><i class="fas fa-folder-open"></i><span>分类</span></div><ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/2020-Spring-NTU-ADL/"><span class="card-category-list-name">2020 Spring NTU ADL</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/CMSC35300-Mathematics-Foundations-of-ML/"><span class="card-category-list-name">CMSC35300 Mathematics Foundations of ML</span><span class="card-category-list-count">11</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/CV/"><span class="card-category-list-name">CV</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Cpp/"><span class="card-category-list-name">Cpp</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Data-Structure-and-Algorithm/"><span class="card-category-list-name">Data Structure and Algorithm</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Mathematic-for-machine-learning-%E7%AC%94%E8%AE%B0/"><span class="card-category-list-name">Mathematic for machine learning 笔记</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/NLP/"><span class="card-category-list-name">NLP</span><span class="card-category-list-count">7</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/NLP-paper/"><span class="card-category-list-name">NLP paper</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Python%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/"><span class="card-category-list-name">Python面向对象</span><span class="card-category-list-count">4</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%89%8D%E7%AB%AF/"><span class="card-category-list-name">前端</span><span class="card-category-list-count">2</span></a></li>
+            
+            </ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">已运行时间 :</div><div class="item-count" id="runtimeshow" data-publishDate="2020-03-09T16:00:00.000Z"></div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">60.1k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021&nbsp;<i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;"class="fas fa-heart"></i> By miller</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'forest',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script><h4>AIgonna</h4></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script></div></body></html>

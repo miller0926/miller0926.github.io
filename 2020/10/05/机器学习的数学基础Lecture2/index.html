@@ -1,0 +1,371 @@
+<!DOCTYPE html><html class="hide-aside" lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lecture 2 Vectors and Matrices in Machine learning | AIgonna</title><meta name="keywords" content="机器学习,线性模型"><meta name="author" content="miller"><meta name="copyright" content="miller"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="Lecture 2 机器学习中的向量和矩阵1. 线性模型 我们可以理解$X_i \in \mathbb{R}^p$为$p$个一系列的数值特征，一般写作一个列向量。  {X}_{i}&#x3D;\left[\begin{array}{c} X_{i 1} \\ x_{i 2} \\ \vdots \\ X_{i p} \end{array}\right] \in \mathbb{R}^{p}\tag{1}从训">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lecture 2 Vectors and Matrices in Machine learning">
+<meta property="og:url" content="http://example.com/2020/10/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture2/index.html">
+<meta property="og:site_name" content="AIgonna">
+<meta property="og:description" content="Lecture 2 机器学习中的向量和矩阵1. 线性模型 我们可以理解$X_i \in \mathbb{R}^p$为$p$个一系列的数值特征，一般写作一个列向量。  {X}_{i}&#x3D;\left[\begin{array}{c} X_{i 1} \\ x_{i 2} \\ \vdots \\ X_{i p} \end{array}\right] \in \mathbb{R}^{p}\tag{1}从训">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/imgs/5.jpg">
+<meta property="article:published_time" content="2020-10-05T15:19:39.000Z">
+<meta property="article:modified_time" content="2020-12-20T07:43:07.523Z">
+<meta property="article:author" content="miller">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="线性模型">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/imgs/5.jpg"><link rel="shortcut icon" href="/img/AI.png"><link rel="canonical" href="http://example.com/2020/10/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture2/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2020-12-20 15:43:07'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}})()</script><link rel="stylesheet" href="/css/bg.css"><meta name="generator" content="Hexo 5.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/AI.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">34</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/imgs/5.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">AIgonna</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Lecture 2 Vectors and Matrices in Machine learning</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2020-10-05T15:19:39.000Z" title="undefined 2020-10-05 23:19:39">2020-10-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CMSC35300-Mathematics-Foundations-of-ML/">CMSC35300 Mathematics Foundations of ML</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">926</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>3分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="Lecture-2-机器学习中的向量和矩阵"><a href="#Lecture-2-机器学习中的向量和矩阵" class="headerlink" title="Lecture 2 机器学习中的向量和矩阵"></a>Lecture 2 机器学习中的向量和矩阵</h2><h3 id="1-线性模型"><a href="#1-线性模型" class="headerlink" title="1. 线性模型"></a>1. 线性模型</h3><p><img src="https://i.loli.net/2020/10/24/t5ajyXsZi7zUKx9.png" alt="机器学习术语" style="zoom:80%;" /></p>
+<p>我们可以理解$X_i \in \mathbb{R}^p$为$p$个一系列的数值特征，一般写作一个列向量。</p>
+<script type="math/tex; mode=display">
+{X}_{i}=\left[\begin{array}{c}
+X_{i 1} \\
+x_{i 2} \\
+\vdots \\
+X_{i p}
+\end{array}\right] \in \mathbb{R}^{p}\tag{1}</script><p>从训练数据，对于新的新样本$X_0$学习如何预测标签(或者目标值)$\hat{y}$。</p>
+<p>例如线性模型，</p>
+<script type="math/tex; mode=display">
+\begin{array}{l}
+\hat{y}=w_{1} x_{01}+w_{2} x_{02}+\cdots w_{p} x_{0 p} \\
+w_{1}, \ldots, w_{p}=\text { weights to be learned from data }
+\end{array}\tag{2}</script><p>using training data to find $W$, such that} $\hat{y_i}\approx y_i, \ for \ i=1, \ldots, n $ . want $L(\hat{y_i}, y_i) $smallest </p>
+<p>权重向量weights vector：</p>
+<script type="math/tex; mode=display">
+\underline W=\left[\begin{array}{c}
+\mathbb{w}_{1} \\
+\mathbb{w}_{2} \\
+\vdots \\
+\mathbb{w}_{p}
+\end{array}\right] \in \mathbb{R}^{p}\tag{3}</script><p>特征向量feature vector：</p>
+<script type="math/tex; mode=display">
+\underline X=\left[\begin{array}{c}
+\mathbb{w}_{o 1} \\
+\mathbb{w}_{o 2} \\
+\vdots \\
+\mathbb{w}_{o p}
+\end{array}\right] \in \mathbb{R}^{p}\tag{4}</script><p>我们的模型就可以写作内积的形式。</p>
+<h4 id="例子1-线性模型"><a href="#例子1-线性模型" class="headerlink" title="例子1 线性模型"></a>例子1 线性模型</h4><p><img src="https://i.loli.net/2020/10/24/hn9C8TiKjH4M6av.png" alt="线性模型" style="zoom:80%;" /></p>
+<p>竖轴是第二个特征维度，横轴是第一个特征维度。蓝色直线代表所有在</p>
+<script type="math/tex; mode=display">
+<X, W>=-2\times x_1+ x_2=0</script><p> 的点。</p>
+<p>我们也可以看作： <script type="math/tex">\hat y_i = x_{i1}w_1+ x_{i2}w_2 + w_0</script> 。我们不防把第一个元素<script type="math/tex">x_1</script>看作1，那么就有：</p>
+<script type="math/tex; mode=display">
+\underline{x}_{0}=\left[\begin{array}{c}
+1 \\
+x_{01} \\
+x_{02} \\
+\vdots \\
+x_{0 p}
+\end{array}\right] , \underline{w}=\left[\begin{array}{c}
+w_{0} \\
+w_{1} \\
+w_{2} \\
+\vdots \\
+w_{p}
+\end{array}\right] \in \mathbb{R}^{p+1} \tag{5}</script><p>也可以像前面一样写成内积形式。</p>
+<p>接下来就是最小化损失函数。</p>
+<h4 id="线性模型的矩阵表示矩阵表示"><a href="#线性模型的矩阵表示矩阵表示" class="headerlink" title="线性模型的矩阵表示矩阵表示"></a>线性模型的矩阵表示矩阵表示</h4><p><img src="https://i.loli.net/2020/10/24/TOANckqixvmW8E5.png" alt="矩阵化线性模型" style="zoom:80%;" /></p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+X&=
+\left[\begin{array}{ll}
+- & x_{1}^{\top}&- \\
+- & x_{2}^{\top}&- \\
+- & x_{n}^{\top}&-
+\end{array}\right]
+\\
+&=\left[\begin{array}{cccc}
+x_{11} & x_{12} & \cdots & x_{1 p} \\
+x_{21} & x_{22} & \cdots & x_{2 p} \\
+\vdots & & \\
+x_{n 1} & x_{n 2} & \cdots & x_{n p}
+\end{array}\right]
+\end{aligned}
+\tag{6}</script><p>例如$x<em>{21}$表示第二个训练样本的第1个特征。$x</em>{12}$表示第一个训练样本的第二个特征。</p>
+<script type="math/tex; mode=display">
+X^T=  
+\begin{bmatrix}  
+  x_{11}& x_{21}& \cdots  & x_{n1} \\  
+  x_{12}& x_{22}& \cdots  & x_{n2} \\  
+  \vdots & \vdots & \ddots & \vdots \\  
+  x_{1p}& x_{2p}& \cdots  & x_{np}  
+\end{bmatrix}  \tag{7}</script><p>$X^T$变成$p$行$n$ 列。</p>
+<p>式6，矩阵$X$的第$i $行<strong>row</strong>代表： 第$i$训练样本的$p$个特征。</p>
+<p>​         矩阵$X$的第$j $列<strong>col</strong>代表：所有 $n$个训练样本的第$j$个特征。</p>
+<p>这就是不同角度看待$X$矩阵。</p>
+<p>计算$Xw$意味着：作$X$每一行和$w$作内积然后把结果用向量$\hat y$保存下来。</p>
+<p>教授Rebecca Willett非常详细讲了矩阵行列之间的变化关系。体会矩阵体积的变化，这对代码中间的debug非常有用.</p>
+<h4 id="例子-2：深刻理解Xw"><a href="#例子-2：深刻理解Xw" class="headerlink" title="例子 2：深刻理解Xw"></a>例子 2：深刻理解Xw</h4><p><img src="https://i.loli.net/2020/10/24/hG8q5SWUlVxbP3s.png" alt="Xw的另一种看法" style="zoom:80%;" /></p>
+<p>上面其实是从2个角度来看矩阵乘法：行向量和列向量。</p>
+<p>行向量角度是我们线代教材常说的，列向量有时候会让计算非常简单。(MIT线代课程，Gilbert Strang讲的非常详细。)</p>
+<p>列向量角度：$Xw$表示$X$的列的权重之和。</p>
+<h4 id="例子3：复杂结构的线性模型"><a href="#例子3：复杂结构的线性模型" class="headerlink" title="例子3：复杂结构的线性模型"></a>例子3：复杂结构的线性模型</h4><p><img src="https://i.loli.net/2020/10/26/5SrwFRp6y9q8nBe.png" alt="矩阵化" style="zoom:80%;" /></p>
+<p>This doesn’t look like a straight line,but linear models can still help!</p>
+<p>cubic polynomial：三次多项式。</p>
+<p>范德蒙矩阵：</p>
+<h3 id="2-矩阵与矩阵相乘"><a href="#2-矩阵与矩阵相乘" class="headerlink" title="2. 矩阵与矩阵相乘"></a>2. 矩阵与矩阵相乘</h3><h4 id="1-例子：推荐系统"><a href="#1-例子：推荐系统" class="headerlink" title="1. 例子：推荐系统"></a>1. 例子：推荐系统</h4><p><img src="https://i.loli.net/2020/10/24/GbnMQkD5A1ujYa8.png" alt="推荐系统简化表示" style="zoom:80%;" /></p>
+<p><img src="https://i.loli.net/2020/10/24/OjI7EQWYwJzaHqb.png" alt="UV列角度看待" style="zoom:80%;" /></p>
+<p>推荐系统</p>
+<p>电影名 观众名 数字是评分</p>
+<p>把矩阵$X$写作矩阵$U*V$,其中$X \in n\times p , U \in n\times r,V \in r\times p $。</p>
+<p>矩阵$U$是对于$r$个示例电影的顾客$r$不同评分向量；$v$是每个实际顾客对$r$示例电影的相似度。</p>
+<p>If $X= UV$，那么</p>
+<script type="math/tex; mode=display">
+X_{ij} = <i^{th} \text{  row  of  U}, j^{th}\text{ col  of  V}></script><p><img src="https://i.loli.net/2020/10/25/fvtUYeNTCkxadsh.png" alt="X的列和行" style="zoom:80%;" /></p>
+<h4 id="2-内积和外积表示"><a href="#2-内积和外积表示" class="headerlink" title="2. 内积和外积表示"></a>2. 内积和外积表示</h4><p><img src="https://i.loli.net/2020/10/25/1fRAWToulPIBMrQ.png" alt="内积和外积表示" style="zoom:80%;" /></p>
+<h4 id="3-怎么找到最小的r"><a href="#3-怎么找到最小的r" class="headerlink" title="3.怎么找到最小的r"></a>3.怎么找到最小的r</h4><p><img src="https://i.loli.net/2020/10/25/AdVpme5LGSlt8HO.png" alt="矩阵的rank" style="zoom:80%;" /></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">miller</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2020/10/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture2/">http://example.com/2020/10/05/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">AIgonna</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><a class="post-meta__tags" href="/tags/%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B/">线性模型</a></div><div class="post_share"><div class="social-share" data-image="/img/imgs/5.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.png" target="_blank"><img class="post-qr-code-img" src="/img/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/img/alipay.png" target="_blank"><img class="post-qr-code-img" src="/img/alipay.png" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2020/10/10/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture3/"><img class="prev-cover" src="/img/imgs/14.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Lecture 3 Least squares and geometry</div></div></a></div><div class="next-post pull-right"><a href="/2020/10/04/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%9A%84%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80Lecture1/"><img class="next-cover" src="/img/imgs/2.jpg" onerror="onerror=null;src='/img/imgs/0.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Lecture 1 Introduction</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2020/10/29/机器学习的数学基础Lecture11/" title="Lecture 11  PageRank and Ridge Regression"><img class="cover" src="/img/imgs/5.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-29</div><div class="title">Lecture 11  PageRank and Ridge Regression</div></div></a></div><div><a href="/2020/10/28/机器学习的数学基础Lecture10/" title="Lecture 10 More on the SVD in Machine Learning"><img class="cover" src="/img/imgs/0.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-28</div><div class="title">Lecture 10 More on the SVD in Machine Learning</div></div></a></div><div><a href="/2020/10/24/机器学习的数学基础Lecture9/" title="Lecture 9 The SVD in Machine Learning"><img class="cover" src="/img/imgs/2.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-24</div><div class="title">Lecture 9 The SVD in Machine Learning</div></div></a></div><div><a href="/2020/10/23/机器学习的数学基础Lecture8/" title="Lecture 8 The Singular Value Decomposition"><img class="cover" src="/img/imgs/15.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-23</div><div class="title">Lecture 8 The Singular Value Decomposition</div></div></a></div><div><a href="/2020/10/22/机器学习的数学基础Lecture7/" title="Lecture 7 Introduction to the Singular Value Decomposition"><img class="cover" src="/img/imgs/0.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-22</div><div class="title">Lecture 7 Introduction to the Singular Value Decomposition</div></div></a></div><div><a href="/2020/10/19/机器学习的数学基础Lecture6/" title="Lecture 6 Finding Orthogonal Bases"><img class="cover" src="/img/imgs/8.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-19</div><div class="title">Lecture 6 Finding Orthogonal Bases</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Lecture-2-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E5%90%91%E9%87%8F%E5%92%8C%E7%9F%A9%E9%98%B5"><span class="toc-number">1.</span> <span class="toc-text">Lecture 2 机器学习中的向量和矩阵</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.</span> <span class="toc-text">1. 线性模型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B%E5%AD%901-%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.1.</span> <span class="toc-text">例子1 线性模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%9F%A9%E9%98%B5%E8%A1%A8%E7%A4%BA%E7%9F%A9%E9%98%B5%E8%A1%A8%E7%A4%BA"><span class="toc-number">1.1.2.</span> <span class="toc-text">线性模型的矩阵表示矩阵表示</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90-2%EF%BC%9A%E6%B7%B1%E5%88%BB%E7%90%86%E8%A7%A3Xw"><span class="toc-number">1.1.3.</span> <span class="toc-text">例子 2：深刻理解Xw</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BE%8B%E5%AD%903%EF%BC%9A%E5%A4%8D%E6%9D%82%E7%BB%93%E6%9E%84%E7%9A%84%E7%BA%BF%E6%80%A7%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.1.4.</span> <span class="toc-text">例子3：复杂结构的线性模型</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%9F%A9%E9%98%B5%E4%B8%8E%E7%9F%A9%E9%98%B5%E7%9B%B8%E4%B9%98"><span class="toc-number">1.2.</span> <span class="toc-text">2. 矩阵与矩阵相乘</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E4%BE%8B%E5%AD%90%EF%BC%9A%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.2.1.</span> <span class="toc-text">1. 例子：推荐系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%86%85%E7%A7%AF%E5%92%8C%E5%A4%96%E7%A7%AF%E8%A1%A8%E7%A4%BA"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. 内积和外积表示</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%80%8E%E4%B9%88%E6%89%BE%E5%88%B0%E6%9C%80%E5%B0%8F%E7%9A%84r"><span class="toc-number">1.2.3.</span> <span class="toc-text">3.怎么找到最小的r</span></a></li></ol></li></ol></li></ol></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021&nbsp;<i style="color:#FF6A6A;animation: announ_animation 0.8s linear infinite;"class="fas fa-heart"></i> By miller</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    loader: {
+      source: {
+        '[tex]/amsCd': '[tex]/amscd'
+      }
+    },
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        addClass: [200,() => {
+          document.querySelectorAll('mjx-container:not([display=\'true\']').forEach( node => {
+            const target = node.parentNode
+            if (!target.classList.contains('has-jax')) {
+              target.classList.add('mathjax-overflow')
+            }
+          })
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'forest',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: '5sVUTO1MTpgoo7pDynh6zYEM-MdYXbMMI',
+      appKey: 'vPUvOT1iP6YqcPPtYSqf8F7A',
+      placeholder: 'Please leave your footprints',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'en',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign(initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script><h4>AIgonna</h4></script><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-fluttering-ribbon.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script></div></body></html>
